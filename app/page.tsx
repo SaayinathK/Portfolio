@@ -867,7 +867,8 @@ import Image from "next/image";
                           >
                             <span className="text-gray-500 mr-2 font-mono">{index + 1}</span>
                             {line.trim()}.
-                            <span className="opacity-0 group-hover:opacity-100 text-gray-400 ml-2 transition-opacity">// ✓</span>
+                            {/* ✓ */}
+                            <span className="opacity-0 group-hover:opacity-100 text-gray-400 ml-2 transition-opacity">✓</span>
                           </motion.p>
                         ))}
                     </div>
@@ -990,8 +991,14 @@ import Image from "next/image";
                               { icon: <Shield size={32} />, title: "Network Security", color: "green", emoji: "🔒" }
                             ];
 
+
                             const palette = {
-                              icons: [<Code2 size={32} />, <Palette size={32} />, <Brain size={32} />, <Shield size={32} />],
+                              icons: [
+                                <Code2 size={32} key="code2" />, 
+                                <Palette size={32} key="palette" />, 
+                                <Brain size={32} key="brain" />, 
+                                <Shield size={32} key="shield" />
+                              ],
                               colors: ["purple", "pink", "cyan", "green"],
                               emojis: ["⚛️", "🎨", "🤖", "🔒"],
                             };
@@ -1003,6 +1010,7 @@ import Image from "next/image";
                                 title: title.trim(),
                                 color: palette.colors[index % palette.colors.length],
                                 emoji: palette.emojis[index % palette.emojis.length],
+                                key: `highlight-skill-${index}`
                               }));
 
                             const skillsToShow = highlightSkills.length > 0 ? highlightSkills : defaultSkills;
@@ -1206,7 +1214,8 @@ import Image from "next/image";
       >
         <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
           <Globe className="w-5 h-5 text-blue-400" />
-          <span className="font-mono text-sm text-blue-400/90">// languages.spoken</span>
+          {/* languages.spoken */}
+          <span className="font-mono text-sm text-blue-400/90">languages.spoken</span>
         </div>
         <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
           Languages I Speak
