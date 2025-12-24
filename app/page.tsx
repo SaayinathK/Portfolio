@@ -1327,7 +1327,8 @@ import Image from "next/image";
                     >
                       <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
                         <Code2 className="w-5 h-5 text-blue-400" />
-                        <span className="font-mono text-sm text-blue-400/90">// skills.technical</span>
+                        {/* skills.technical */}
+                        <span className="font-mono text-sm text-blue-400/90">skills.technical</span>
                       </div>
                       <h3 className="text-4xl md:text-5xl font-extrabold bg-white bg-clip-text text-transparent tracking-tight">
                         Technical Arsenal
