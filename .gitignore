@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+.env.local
+
+# VSCode
+.vscode/
+
+# Misc
+*.local
+*.sublime-workspace
+*.sublime-project
+
+# Public uploads
+public/uploads/
+
+# Coverage
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Backup files
+*.bak
+*.backup
+
+# Others
+.idea/
+*.swp
