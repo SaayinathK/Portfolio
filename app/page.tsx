@@ -514,37 +514,37 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
 
           {/* Skills Section */}
           <motion.section id="skills" className="scroll-mt-20">
-            <SkillsSection skills={skills} />
+            <SkillsSection />
           </motion.section>
 
           {/* Projects Section - now calls the moved component */}
           <motion.section id="projects" className="scroll-mt-20">
-            <ProjectsSection projects={projects} SectionHeader={SectionHeader} />
+            <ProjectsSection />
           </motion.section>
 
           {/* Education Section - Vertical Timeline */}
           <motion.section id="education" className="scroll-mt-20">
-            <EducationSection education={education} SectionHeader={SectionHeader} />
+            <EducationSection />
           </motion.section>
 
           {/* Experience Section - now calls the moved component */}
           <motion.section id="experience" className="scroll-mt-20">
-            <ExperienceSection experience={experience} SectionHeader={SectionHeader} />
+            <ExperienceSection />
           </motion.section>
 
           {/* Achievements Section - now calls the moved component */}
           <motion.section id="achievements" className="scroll-mt-20">
-            <AchievementsSection achievements={achievements} SectionHeader={SectionHeader} />
+            <AchievementsSection />
           </motion.section>
 
           {/* Gallery Section - now calls the moved component */}
           <motion.section id="gallery" className="scroll-mt-20">
-            <GallerySection gallery={gallery} SectionHeader={SectionHeader} />
+            <GallerySection />
           </motion.section>
 
           {/* Contact Section - now calls the moved component */}
           <motion.section id="contact" className="scroll-mt-20">
-            <ContactSection contacts={contacts} SectionHeader={SectionHeader} />
+            <ContactSection />
           </motion.section>
         </div>
         <SpeedInsights />
