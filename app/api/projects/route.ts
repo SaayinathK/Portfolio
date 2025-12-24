@@ -9,7 +9,8 @@ export async function GET() {
   try {
     await dbConnect();
     const projects = await Project.find({}).sort({ createdAt: -1 }).lean();
-    return NextResponse.json(projects);
+    // Always return an array for frontend .map compatibility
+    return NextResponse.json(Array.isArray(projects) ? projects : []);
   } catch (error) {
     console.error('GET projects error:', error);
     return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
@@ -19,7 +20,7 @@ export async function GET() {
 // POST: Handle both upload and create project
 export async function POST(req: Request) {
   const url = new URL(req.url);
-  
+
   // Handle image upload
   if (url.searchParams.get('action') === 'upload') {
     try {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
       const ext = path.extname(file.name);
       const nameWithoutExt = path.basename(file.name, ext);
       const filename = `${nameWithoutExt}-${uniqueSuffix}${ext}`.replace(/\s/g, '-');
-      
+
       // Create uploads directory if it doesn't exist
       const uploadDir = path.join(process.cwd(), 'public', 'uploads');
       await mkdir(uploadDir, { recursive: true });
@@ -60,18 +61,18 @@ export async function POST(req: Request) {
 
       // Return public URL
       const imageUrl = `/uploads/${filename}`;
-      return NextResponse.json({ 
-        url: imageUrl, 
+      return NextResponse.json({
+        url: imageUrl,
         filename,
         size: file.size,
-        type: file.type 
+        type: file.type
       }, { status: 200 });
 
     } catch (error) {
       console.error('Upload error:', error);
-      return NextResponse.json({ 
-        error: 'Upload failed', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      return NextResponse.json({
+        error: 'Upload failed',
+        details: error instanceof Error ? error.message : 'Unknown error'
       }, { status: 500 });
     }
   }
@@ -80,13 +81,17 @@ export async function POST(req: Request) {
   try {
     await dbConnect();
     const body = await req.json();
-    
+
     const payload = {
       ...body,
-      tags: Array.isArray(body.tags) ? body.tags : body.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
-      technologies: Array.isArray(body.technologies) ? body.technologies : body.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
+      tags: Array.isArray(body.tags)
+        ? body.tags
+        : body.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
+      technologies: Array.isArray(body.technologies)
+        ? body.technologies
+        : body.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
     };
-    
+
     const project = new Project(payload);
     await project.save();
     return NextResponse.json(project, { status: 201 });
@@ -109,8 +114,12 @@ export async function PUT(req: Request) {
 
     const payload = {
       ...update,
-      tags: Array.isArray(update.tags) ? update.tags : update.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
-      technologies: Array.isArray(update.technologies) ? update.technologies : update.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
+      tags: Array.isArray(update.tags)
+        ? update.tags
+        : update.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
+      technologies: Array.isArray(update.technologies)
+        ? update.technologies
+        : update.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || [],
     };
 
     const project = await Project.findOneAndUpdate(
@@ -118,11 +127,11 @@ export async function PUT(req: Request) {
       payload,
       { new: true }
     ).lean();
-    
+
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json(project);
   } catch (error) {
     console.error('PUT project error:', error);
@@ -141,11 +150,11 @@ export async function DELETE(req: Request) {
     }
 
     const result = await Project.findOneAndDelete({ _id }).lean();
-    
+
     if (!result) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE project error:', error);

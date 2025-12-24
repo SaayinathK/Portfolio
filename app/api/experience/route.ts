@@ -7,7 +7,8 @@ export async function GET() {
   try {
     await dbConnect();
     const experiences = await Experience.find({}).sort({ startDate: -1 }).lean();
-    return NextResponse.json(experiences);
+    // Always return an array for frontend .map compatibility
+    return NextResponse.json(Array.isArray(experiences) ? experiences : []);
   } catch (error) {
     console.error('GET experiences error:', error);
     return NextResponse.json({ error: 'Failed to fetch experiences' }, { status: 500 });

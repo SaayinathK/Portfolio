@@ -7,7 +7,8 @@ export async function GET() {
   try {
     await dbConnect();
     const items = await Gallery.find({}).sort({ createdAt: -1 }).lean();
-    return NextResponse.json(items);
+    // Always return an array for frontend .map compatibility
+    return NextResponse.json(Array.isArray(items) ? items : []);
   } catch (error) {
     console.error('GET gallery error:', error);
     return NextResponse.json({ error: 'Failed to fetch gallery items' }, { status: 500 });
