@@ -41,7 +41,7 @@ const EducationPage: React.FC = () => {
     fetch("/api/education")
       .then((res) => res.json())
       .then((data) => {
-        setEducation(data || []);
+        setEducation(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -62,7 +62,7 @@ const EducationPage: React.FC = () => {
         </div>
       ) : (
         <div className="relative pl-12">
-          {education.map((edu, i) => (
+          {Array.isArray(education) && education.map((edu, i) => (
             <motion.div
               key={edu._id || i}
               initial={{ opacity: 0, x: -20 }}

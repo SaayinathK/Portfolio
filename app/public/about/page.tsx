@@ -59,8 +59,17 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
     useEffect(() => {
       // Replace with your actual API endpoints or static data
-      getData<About>("/api/about").then(setAbout);
-      getData<any[]>("/api/contact").then(data => setContact(data || []));
+      getData<About>("/api/about").then(data => {
+        if (data) {
+          setAbout({
+            ...data,
+            highlights: Array.isArray(data.highlights) ? data.highlights : [],
+          });
+        } else {
+          setAbout(null);
+        }
+      });
+      getData<any[]>("/api/contact").then(data => setContact(Array.isArray(data) ? data : []));
     }, []);
 
     return (
@@ -267,7 +276,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                           transition={{ delay: 0.9 }}
                           className="flex gap-3"
                         >
-                          {contact[0].linkedin && (
+                          {Array.isArray(contact) && contact.length > 0 && contact[0].linkedin && (
                             <motion.a
                               whileHover={{ scale: 1.1, y: -3 }}
                               whileTap={{ scale: 0.95 }}
@@ -280,7 +289,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                             </motion.a>
                           )}
                           
-                          {contact[0].github && (
+                          {Array.isArray(contact) && contact.length > 0 && contact[0].github && (
                             <motion.a
                               whileHover={{ scale: 1.1, y: -3 }}
                               whileTap={{ scale: 0.95 }}
@@ -293,7 +302,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                             </motion.a>
                           )}
                           
-                          {contact[0].instagram && (
+                          {Array.isArray(contact) && contact.length > 0 && contact[0].instagram && (
                             <motion.a
                               whileHover={{ scale: 1.1, y: -3 }}
                               whileTap={{ scale: 0.95 }}
@@ -306,7 +315,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                             </motion.a>
                           )}
                           
-                          {contact[0].facebook && (
+                          {Array.isArray(contact) && contact.length > 0 && contact[0].facebook && (
                             <motion.a
                               whileHover={{ scale: 1.1, y: -3 }}
                               whileTap={{ scale: 0.95 }}

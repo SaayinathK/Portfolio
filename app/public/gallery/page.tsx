@@ -80,7 +80,7 @@ const GalleryPage: React.FC = () => {
     fetch("/api/gallery")
       .then((res) => res.json())
       .then((data) => {
-        setGallery(data || []);
+        setGallery(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -152,7 +152,7 @@ const GalleryPage: React.FC = () => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            {gallery.map((g, i) => {
+            {Array.isArray(gallery) && gallery.map((g, i) => {
               const src = g.images?.[0] || g.image || g.url || g.imageUrl || g.src;
               const alt = g.title || "Gallery item";
               const imageCount = g.images?.length || 1;
@@ -337,7 +337,7 @@ const GalleryPage: React.FC = () => {
 
           {/* Progress indicator */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
-            {gallery.slice(0, Math.min(gallery.length, 8)).map((_, i) => (
+            {Array.isArray(gallery) && gallery.slice(0, Math.min(gallery.length, 8)).map((_, i) => (
               <div key={i} className="w-2 h-2 rounded-full bg-blue-500/30" />
             ))}
           </div>

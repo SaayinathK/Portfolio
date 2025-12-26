@@ -43,15 +43,15 @@ const SkillsPage: React.FC = () => {
   return (
     <motion.span
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="font-mono text-sm text-blue-400/90"
-    >
-      {text}
-      <motion.span
-        animate={{ opacity: [0, 1, 0] }}
-        transition={{ repeat: Infinity, duration: 1.2 }}
-      >
+      useEffect(() => {
+        fetch("/api/skills")
+          .then((res) => res.json())
+          .then((data) => {
+            setSkills(Array.isArray(data) ? data : []);
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
+      }, []);
         _
       </motion.span>
     </motion.span>

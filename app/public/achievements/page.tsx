@@ -99,7 +99,7 @@ const AchievementsPage: React.FC = () => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            {achievements
+            {Array.isArray(achievements) && achievements
               .sort((a, b) => {
                 const yearA = parseInt(a.year || a.date?.split('-')[0] || '0');
                 const yearB = parseInt(b.year || b.date?.split('-')[0] || '0');

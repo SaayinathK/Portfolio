@@ -42,7 +42,7 @@ const ProjectsPage: React.FC = () => {
     fetch("/api/projects")
       .then((res) => res.json())
       .then((data) => {
-        setProjects(data || []);
+        setProjects(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -94,7 +94,7 @@ const ProjectsPage: React.FC = () => {
               scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
             }}
           >
-            {projects.map((p, i) => {
+            {Array.isArray(projects) && projects.map((p, i) => {
               const title = p.title || p.name || "Untitled";
               const desc = p.description || p.summary || "";
               const github = p.github || p.repoUrl || p.githubLink || "";

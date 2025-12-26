@@ -37,7 +37,7 @@ const ContactPage: React.FC = () => {
     fetch("/api/contact")
       .then((res) => res.json())
       .then((data) => {
-        setcontact(data || []);
+        setcontact(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -128,7 +128,7 @@ const ContactPage: React.FC = () => {
           />
         </div>
 
-        {contact.length === 0 ? (
+        {(!Array.isArray(contact) || contact.length === 0) ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
             <div className="animate-pulse">Loading contact information...</div>
           </div>

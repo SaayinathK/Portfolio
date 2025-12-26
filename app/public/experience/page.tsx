@@ -42,7 +42,7 @@ const ExperiencePage: React.FC = () => {
     fetch("/api/experience")
       .then((res) => res.json())
       .then((data) => {
-        setExperience(data || []);
+        setExperience(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -97,7 +97,7 @@ const ExperiencePage: React.FC = () => {
               scrollbarColor: "rgba(107, 114, 128, 0.3) transparent",
             }}
           >
-            {experience.map((exp, i) => (
+            {Array.isArray(experience) && experience.map((exp, i) => (
               <motion.div
                 key={exp._id || i}
                 initial={{ opacity: 0, scale: 0.95 }}
