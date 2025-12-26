@@ -55,12 +55,6 @@ const ProjectsPage: React.FC = () => {
       animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
-      <SectionHeader
-        title="Projects"
-        subtitle="A collection of my best work and creative solutions"
-        codeComment="// projects[]"
-      />
-
       {loading ? (
         <div className="flex gap-6 overflow-x-auto pb-4">
           {[1, 2, 3, 4].map((i) => (

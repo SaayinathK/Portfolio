@@ -38,6 +38,25 @@ const SkillsPage: React.FC = () => {
     },
     {} as Record<string, Skill[]>
   );
+  
+  const TypingLabel = ({ text }: { text: string }) => {
+  return (
+    <motion.span
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="font-mono text-sm text-blue-400/90"
+    >
+      {text}
+      <motion.span
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ repeat: Infinity, duration: 1.2 }}
+      >
+        _
+      </motion.span>
+    </motion.span>
+  );
+};
 
   // Get Languages Spoken
   const languagesSpoken = skills.filter((skill) => skill.type === "Languages Spoken");
@@ -142,23 +161,7 @@ const SkillsPage: React.FC = () => {
               className="relative"
             >
               <div className="relative">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center mb-12"
-                >
-                  <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
-                    <Globe className="w-5 h-5 text-blue-400" />
-                    <span className="font-mono text-sm text-blue-400/90">languages.spoken</span>
-                  </div>
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-                    Languages I Speak
-                  </h3>
-                  <p className="text-gray-400 text-lg mt-3 max-w-xl mx-auto">
-                    Communication across cultures and communities
-                  </p>
-                </motion.div>
+                
                 <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0">
                   {languagesSpoken.map((lang, idx) => (
                     <motion.div
@@ -250,7 +253,7 @@ const SkillsPage: React.FC = () => {
             >
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
                 <Code2 className="w-5 h-5 text-blue-400" />
-                <span className="font-mono text-sm text-blue-400/90">skills.technical</span>
+                <TypingLabel text="set skills.technical()"/>
               </div>
               <h3 className="text-4xl md:text-5xl font-extrabold bg-white bg-clip-text text-transparent tracking-tight">
                 Technical Arsenal

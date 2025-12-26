@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Eye, X, Image as ImageIcon } from "lucide-react";
@@ -37,6 +37,45 @@ const GalleryPage: React.FC = () => {
   const [selectedAlbumItem, setSelectedAlbumItem] = useState<GalleryItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const galleryScrollRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard navigation for gallery scroll
+  const handleGalleryKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (document.activeElement !== document.body) return;
+      if (!galleryScrollRef.current) return;
+      if (e.key === "ArrowRight") {
+        galleryScrollRef.current.scrollBy({ left: 400, behavior: "smooth" });
+      } else if (e.key === "ArrowLeft") {
+        galleryScrollRef.current.scrollBy({ left: -400, behavior: "smooth" });
+      }
+    },
+    []
+  );
+
+  // Keyboard navigation for modal
+  const handleModalKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isAlbumModalOpen || !selectedAlbumItem) return;
+      if (e.key === "ArrowRight") {
+        setCurrentImageIndex((prev) =>
+          selectedAlbumItem.images && selectedAlbumItem.images.length > 0
+            ? (prev + 1) % selectedAlbumItem.images.length
+            : prev
+        );
+      } else if (e.key === "ArrowLeft") {
+        setCurrentImageIndex((prev) =>
+          selectedAlbumItem.images && selectedAlbumItem.images.length > 0
+            ? (prev - 1 + selectedAlbumItem.images.length) % selectedAlbumItem.images.length
+            : prev
+        );
+      } else if (e.key === "Escape") {
+        setIsAlbumModalOpen(false);
+      }
+    },
+    [isAlbumModalOpen, selectedAlbumItem]
+  );
+
   useEffect(() => {
     fetch("/api/gallery")
       .then((res) => res.json())
@@ -47,6 +86,21 @@ const GalleryPage: React.FC = () => {
       .catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (isAlbumModalOpen) {
+      window.addEventListener("keydown", handleModalKeyDown);
+      document.body.style.overflow = "hidden";
+    } else {
+      window.addEventListener("keydown", handleGalleryKeyDown);
+      document.body.style.overflow = "";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleModalKeyDown);
+      window.removeEventListener("keydown", handleGalleryKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isAlbumModalOpen, handleModalKeyDown, handleGalleryKeyDown]);
+
   return (
     <motion.section
       id="gallery"
@@ -55,9 +109,9 @@ const GalleryPage: React.FC = () => {
       className="scroll-mt-20"
     >
       <SectionHeader
-        title="Gallery"
-        subtitle="Explore snapshots from projects and moments across my journey"
-        codeComment="// await loadImages();"
+        title=""
+        subtitle=""
+        codeComment=""
       />
 
       {loading ? (
@@ -73,9 +127,8 @@ const GalleryPage: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => {
-              const container = document.getElementById("gallery-scroll");
-              if (container) {
-                container.scrollBy({
+              if (galleryScrollRef.current) {
+                galleryScrollRef.current.scrollBy({
                   left: -400,
                   behavior: "smooth",
                 });
@@ -89,11 +142,14 @@ const GalleryPage: React.FC = () => {
           {/* Scrollable Gallery */}
           <div
             id="gallery-scroll"
-            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+            ref={galleryScrollRef}
+            tabIndex={0}
+            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
             style={{
               scrollBehavior: "smooth",
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {gallery.map((g, i) => {
@@ -126,13 +182,11 @@ const GalleryPage: React.FC = () => {
                     rotateY: 3,
                     transition: { duration: 0.3 },
                   }}
-                  className="flex-shrink-0 w-80 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
+                  className="flex-shrink-0 w-80 h-96 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
                   onClick={() => {
-                    if (imageCount > 1) {
-                      setSelectedAlbumItem(g);
-                      setCurrentImageIndex(0);
-                      setIsAlbumModalOpen(true);
-                    }
+                    setSelectedAlbumItem(g);
+                    setCurrentImageIndex(0);
+                    setIsAlbumModalOpen(true);
                   }}
                 >
                   {/* Animated border glow */}
@@ -150,7 +204,7 @@ const GalleryPage: React.FC = () => {
 
                   {/* Thumbnail Image */}
                   {src ? (
-                    <div className="relative h-96 w-full overflow-hidden rounded-3xl">
+                    <div className="relative h-full w-full overflow-hidden rounded-3xl">
                       <Image
                         src={src}
                         alt={alt}
@@ -169,7 +223,7 @@ const GalleryPage: React.FC = () => {
                       />
                     </div>
                   ) : (
-                    <div className="h-96 w-full flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-3xl">
+                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-3xl">
                       <ImageIcon size={56} className="text-blue-400/50" />
                     </div>
                   )}
@@ -259,11 +313,6 @@ const GalleryPage: React.FC = () => {
                       />
                     ))}
                   </div>
-
-                  {/* Index number */}
-                  <div className="absolute bottom-4 left-4 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                    <span className="text-blue-400 text-xs font-bold">{i + 1}</span>
-                  </div>
                 </motion.figure>
               );
             })}
@@ -274,9 +323,8 @@ const GalleryPage: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => {
-              const container = document.getElementById("gallery-scroll");
-              if (container) {
-                container.scrollBy({
+              if (galleryScrollRef.current) {
+                galleryScrollRef.current.scrollBy({
                   left: 400,
                   behavior: "smooth",
                 });
@@ -312,11 +360,12 @@ const GalleryPage: React.FC = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               className="bg-gradient-to-br from-black/95 to-black/85 border-2 border-blue-500/30 rounded-3xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col relative"
+              style={{ width: "600px", height: "600px" }}
             >
               {/* Header */}
               <div className="p-6 border-b border-blue-500/20 flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">{selectedAlbumItem.title || "Album"}</h3>
+                  <h3 className="text-2xl font-bold text-white mb-1 truncate">{selectedAlbumItem.title || "Album"}</h3>
                   <p className="text-gray-400 text-sm">{selectedAlbumItem.images?.length || 1} images</p>
                 </div>
                 <motion.button
@@ -368,7 +417,7 @@ const GalleryPage: React.FC = () => {
                                 selectedAlbumItem.images.length
                             )
                           }
-                          className="absolute left-4 p-3 rounded-full bg-blue-600/80 hover:bg-blue-500 text-white transition-all shadow-lg"
+                          className="absolute left-4 p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg"
                         >
                           <ChevronLeft className="w-6 h-6" />
                         </motion.button>
@@ -380,7 +429,7 @@ const GalleryPage: React.FC = () => {
                               (prev) => (prev + 1) % selectedAlbumItem.images.length
                             )
                           }
-                          className="absolute right-4 p-3 rounded-full bg-blue-600/80 hover:bg-blue-500 text-white transition-all shadow-lg"
+                          className="absolute right-4 p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg"
                         >
                           <ChevronRight className="w-6 h-6" />
                         </motion.button>
@@ -392,7 +441,7 @@ const GalleryPage: React.FC = () => {
 
               {/* Thumbnail Strip */}
               {selectedAlbumItem.images && selectedAlbumItem.images.length > 1 && (
-                <div className="p-4 border-t border-blue-500/20 bg-black/50 overflow-x-auto max-h-32">
+                <div className="p-4 border-t border-blue-500/20 bg-black/50 overflow-x-auto max-h-32 no-scrollbar">
                   <div className="flex gap-3">
                     {selectedAlbumItem.images.map((img: string, idx: number) => (
                       <motion.button
@@ -419,16 +468,22 @@ const GalleryPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Keyboard Navigation Hint */}
-              <div className="px-6 py-3 text-center text-gray-400 text-xs border-t border-blue-500/10">
-                <span className="inline-block">
-                  Use arrow buttons or arrow keys to navigate • ESC to close
-                </span>
-              </div>
+
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hide scrollbars */}
+      <style jsx global>{`
+        .no-scrollbar {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none !important;
+        }
+      `}</style>
     </motion.section>
   );
 };

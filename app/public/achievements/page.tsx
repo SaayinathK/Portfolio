@@ -37,14 +37,16 @@ const AchievementsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace this with your actual API endpoint
-    fetch("/api/achievements")
-      .then((res) => res.json())
-      .then((data) => {
-        setAchievements(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    async function fetchAchievements() {
+      try {
+        const res = await fetch("/api/achievements");
+        const data = await res.json();
+        setAchievements(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false); // <-- Always set loading to false after fetch
+      }
+    }
+    fetchAchievements();
   }, []);
 
   return (
@@ -55,9 +57,9 @@ const AchievementsPage: React.FC = () => {
       className="scroll-mt-20"
     >
       <SectionHeader 
-        title="Achievements & Awards"
-        subtitle="Milestones and recognitions earned along the journey"
-        codeComment="// achievements[]"
+        title=""
+        subtitle=""
+        codeComment=""
       />
       
       {loading ? (
@@ -89,11 +91,12 @@ const AchievementsPage: React.FC = () => {
           {/* Scrollable Achievements */}
           <div
             id="achievements-scroll"
-            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
             style={{
               scrollBehavior: "smooth",
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {achievements
@@ -154,13 +157,13 @@ const AchievementsPage: React.FC = () => {
                   />
                   
                   {/* Icon with pulsing effect */}
+
                   <motion.div 
-                    className="relative mb-6 inline-flex"
+                    className="relative mb-0 flex items-center gap-3" // changed from inline-flex to flex, added gap
                     whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                     transition={{ duration: 0.5 }}
                   >
-                    <Icon className={`w-10 h-10 ${colorScheme.icon}`} />
-                    <motion.div 
+                     <motion.div 
                       className={`absolute inset-0 rounded-2xl blur-xl`}
                       style={{ background: `radial-gradient(circle, ${colorScheme.icon.includes('blue') ? 'rgba(59, 130, 246, 0.3)' : colorScheme.icon.includes('cyan') ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.3)'})` }}
                       animate={{
@@ -173,20 +176,21 @@ const AchievementsPage: React.FC = () => {
                         ease: "easeInOut"
                       }}
                     />
-                  </motion.div>
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <h3 className="text-xl font-bold text-white mb-1 group-hover/card:text-blue-300 transition-colors line-clamp-2">
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover/card:text-blue-300 transition-colors line-clamp-2 relative z-10">
                       {a.title || a.name || "Achievement"}
                     </h3>
-                    {/* Organization (if available) */}
+                  </motion.div>
+
+                  {/* Organization (if available) */}
                     {a.organization && (
-                      <div className="text-sm text-blue-200 mb-3 font-medium truncate">
+                      <div className="text-sm text-blue-200 mb-2 font-medium truncate">
                         {a.organization}
                       </div>
                     )}
-                    
+
+                  {/* Content */}
+                  <div className="relative z-10">
+                                      
                     {/* Date badge */}
                     {(a.year || a.date) && (
                       <motion.div 
@@ -266,6 +270,16 @@ const AchievementsPage: React.FC = () => {
           </motion.button>
         </div>
       )}
+      {/* Hide scrollbars */}
+      <style jsx global>{`
+        .no-scrollbar {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none !important;
+        }
+      `}</style>
     </motion.section>
   );
 };

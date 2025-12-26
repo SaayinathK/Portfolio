@@ -8,9 +8,9 @@ export async function GET() {
     await dbConnect();
     const about = await About.findOne({}).lean();
     if (!about) {
-      return NextResponse.json([], { status: 200 }); // Return empty array for consistency
+      return NextResponse.json({ error: 'About information not found' }, { status: 404 });
     }
-    return NextResponse.json([about], { status: 200 }); // Return as array for frontend .map compatibility
+    return NextResponse.json(about);
   } catch (error) {
     console.error('GET about error:', error);
     return NextResponse.json({ error: 'Failed to fetch about information' }, { status: 500 });

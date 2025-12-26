@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, Zap, Code, Trophy, Mail, Home } from "lucide-react";
-import Link from "next/link";
+import { User, Zap, Code, Trophy, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const GraduationCap = ({ size = 24, className = "" }) => (
@@ -81,7 +80,7 @@ export default function Navbar() {
       {/* Fixed Center Navigation - Home Page Only */}
       {pathname === "/" && (
         <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-xs md:max-w-none md:w-auto">
-          <div className="flex items-center gap-1 px-2 py-2 rounded-full border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl shadow-blue-900/20 md:gap-2 md:px-4 md:py-3">
+          <div className="flex items-center gap-1 px-2 py-2 rounded-full border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl shadow-blue-900/20 md:gap-2 md:px-4 md:py-3">
             {navLinks.map((link) => {
               const Icon = typeof link.icon === 'function' ? link.icon : link.icon;
               return (
@@ -108,7 +107,7 @@ export default function Navbar() {
                       <motion.div
                         layoutId="activeNav"
                         className="absolute inset-0 rounded-full border-2 border-blue-400/50"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 50 }}
                       />
                     )}
                   </AnimatePresence>

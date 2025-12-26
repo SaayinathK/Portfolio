@@ -56,9 +56,9 @@ const ExperiencePage: React.FC = () => {
       className="scroll-mt-20"
     >
       <SectionHeader
-        title="Professional Experience"
-        subtitle="My career journey and professional achievements"
-        codeComment="// experience[]"
+        title=""
+        subtitle=""
+        codeComment=""
       />
 
       {loading ? (

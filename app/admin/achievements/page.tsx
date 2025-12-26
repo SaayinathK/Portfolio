@@ -52,35 +52,57 @@ export default function AdminAchievementsPage() {
     loadAchievements();
   }, []);
 
+  // On create
   const handleCreate = async (values: AchievementFormValues) => {
     const payload = {
       ...values,
       date: values.date ? new Date(values.date) : undefined,
     };
-    await fetch("/api/achievements", {
+    const res = await fetch("/api/achievements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    const newAchievement = await res.json();
+    setAchievements(prev => [
+      {
+        ...newAchievement,
+        date: newAchievement.date ? new Date(newAchievement.date).toISOString().substring(0, 10) : "",
+      },
+      ...prev,
+    ]);
     setEditing(null);
-    await loadAchievements();
   };
 
+  // On update
   const handleUpdate = async (values: AchievementFormValues) => {
     if (!values._id) return;
     const payload = {
       ...values,
       date: values.date ? new Date(values.date) : undefined,
     };
-    await fetch("/api/achievements", {
+    const res = await fetch("/api/achievements", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    const updatedAchievement = await res.json();
+    setAchievements(prev =>
+      prev.map(a =>
+        a._id === updatedAchievement._id
+          ? {
+              ...updatedAchievement,
+              date: updatedAchievement.date
+                ? new Date(updatedAchievement.date).toISOString().substring(0, 10)
+                : "",
+            }
+          : a
+      )
+    );
     setEditing(null);
-    await loadAchievements();
   };
 
+  // On delete
   const handleDelete = async (id: string) => {
     setDeletingId(id);
     try {
@@ -89,7 +111,7 @@ export default function AdminAchievementsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ _id: id }),
       });
-      await loadAchievements();
+      setAchievements(prev => prev.filter(a => a._id !== id));
     } finally {
       setDeletingId(null);
       setShowDeleteConfirm(null);

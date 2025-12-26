@@ -30,47 +30,53 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, codeComm
 );
 
 const ContactPage: React.FC = () => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contact, setcontact] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/contacts")
+    fetch("/api/contact")
       .then((res) => res.json())
       .then((data) => {
-        setContacts(data || []);
+        setcontact(data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !subject || !message) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    setError("");
     setSubmitting(true);
-    setError(null);
-    setSubmitted(false);
 
-    // Simulate sending (replace with your actual logic)
+    const mailtoLink = `mailto:k.saayinath@gmail.com
+      ?subject=${encodeURIComponent(subject)}
+      &body=${encodeURIComponent(
+        `From: ${email}\n\nMessage:\n${message}`
+      )}`;
+
+    window.location.href = mailtoLink;
+
     setTimeout(() => {
-      if (!name || !email || !message) {
-        setError("Please fill in all fields.");
-        setSubmitting(false);
-        return;
-      }
-      setSubmitted(true);
       setSubmitting(false);
-      setName("");
-      setEmail("");
-      setMessage("");
-    }, 1200);
+      setSubmitted(true);
+    }, 800);
   };
+
 
   return (
     <motion.section
@@ -80,9 +86,9 @@ const ContactPage: React.FC = () => {
       className="scroll-mt-20"
     >
       <SectionHeader
-        title="Contact"
-        subtitle="Have a project in mind? Let's collaborate and create something amazing together"
-        codeComment="// contact[]"
+        title=""
+        subtitle=""
+        codeComment=""
       />
 
       <motion.div
@@ -122,12 +128,12 @@ const ContactPage: React.FC = () => {
           />
         </div>
 
-        {contacts.length === 0 ? (
+        {contact.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
             <div className="animate-pulse">Loading contact information...</div>
           </div>
         ) : (() => {
-          const c = contacts[0];
+          const c = contact[0];
           return (
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10">
               {/* Left - Contact Info */}
@@ -319,102 +325,89 @@ const ContactPage: React.FC = () => {
               </div>
 
               {/* Right - Message Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* 1. Email Address */}
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="space-y-6"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
               >
-                <h3 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-teal-100 bg-clip-text text-transparent mb-6">
-                  Send a Message
-                </h3>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Name</label>
-                    <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
-                      required
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.55 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Email</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="john@example.com"
-                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
-                      required
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Message</label>
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Tell me about your project..."
-                      rows={5}
-                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
-                      required
-                    />
-                  </motion.div>
-
-                  {error && (
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-sm text-red-400 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 bg-red-400 rounded-full" />
-                      {error}
-                    </motion.p>
-                  )}
-
-                  {submitted && !error && (
-                    <motion.p
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="text-sm text-green-400 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                      Thanks! Your message is on its way.
-                    </motion.p>
-                  )}
-
-                  <motion.button
-                    type="submit"
-                    disabled={submitting}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed group relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-                    <Send size={18} className="relative z-10" />
-                    <span className="relative z-10">
-                      {submitting ? "Opening Mail..." : "Send Message"}
-                    </span>
-                  </motion.button>
-                </form>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  Your Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
+                />
               </motion.div>
+
+              {/* 2. Subject */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  Subject
+                </label>
+                <input
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Project inquiry"
+                  required
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
+                />
+              </motion.div>
+
+              {/* 3. Message */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+              >
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  Message
+                </label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Write your message here..."
+                  rows={5}
+                  required
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
+                />
+              </motion.div>
+
+              {/* Error */}
+              {error && (
+                <p className="text-sm text-red-400">{error}</p>
+              )}
+
+              {/* Success */}
+              {submitted && !error && (
+                <p className="text-sm text-green-400">
+                  Email client opened successfully.
+                </p>
+              )}
+
+              {/* Submit Button */}
+              <motion.button
+                type="submit"
+                disabled={submitting}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 shadow-lg transition-all disabled:opacity-60"
+              >
+                {submitting ? "Opening Mail..." : "Send Message"}
+              </motion.button>
+
+            </form>
+
             </div>
           );
         })()}

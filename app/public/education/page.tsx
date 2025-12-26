@@ -54,12 +54,6 @@ const EducationPage: React.FC = () => {
       animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
-      <SectionHeader
-        title="Education"
-        subtitle="My academic journey and learning achievements"
-        codeComment="// education[]"
-      />
-
       {loading ? (
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
