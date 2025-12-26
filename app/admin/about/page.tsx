@@ -64,6 +64,26 @@ export default function AdminAboutPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete the About section? This cannot be undone.")) return;
+    try {
+      setError(null);
+      setLoading(true);
+      const res = await fetch("/api/about", {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      setAbout(null);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError("Failed to delete about information");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-16">
@@ -100,13 +120,26 @@ export default function AdminAboutPage() {
         {/* Form Section */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-md border p-6 hover:shadow-lg transition-shadow duration-300">
-            <h2 className="text-xl font-semibold mb-6 text-gray-700">
-              {about ? "Edit About Section" : "Create About Section"}
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-700">
+                {about ? "Edit About Section" : "Create About Section"}
+              </h2>
+              {about && (
+                <button
+                  onClick={handleDelete}
+                  className="ml-4 px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={loading}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
             <AboutForm
               initialValues={
                 about
                   ? {
+                      firstName: about.firstName || "",
+                      lastName: about.lastName || "",
                       title: about.title || "",
                       shortBio: about.shortBio || "",
                       longBio: about.longBio || "",
@@ -143,6 +176,10 @@ export default function AdminAboutPage() {
                   />
                 )}
 
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">NAME</p>
+                  <p className="font-medium text-gray-700">{about.firstName} {about.lastName}</p>
+                </div>
                 <div>
                   <p className="text-xs text-gray-400 mb-1">TITLE</p>
                   <p className="font-medium text-gray-700">{about.title}</p>

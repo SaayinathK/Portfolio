@@ -6,6 +6,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
   import { motion, AnimatePresence } from "framer-motion";
   
   interface About {
+    firstName?: string;
+    lastName?: string;
     title: string;
     shortBio: string;
     longBio: string;
@@ -171,8 +173,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         transition={{ delay: 0.4 }}
                         className="text-5xl md:text-6xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent"
                       >
-                        Saayinath
-                        <span>Kanesamoorthy</span>
+                        {about?.firstName || "Your"}
+                        <span>{about?.lastName ? ` ${about.lastName}` : " Name"}</span>
                       </motion.h1>
                       
                       <motion.div

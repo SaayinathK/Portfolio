@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Upload, X, Mail, Phone, MapPin, FileText, User } from "lucide-react";
 
 export interface AboutFormValues {
+  firstName: string;
+  lastName: string;
   title: string;
   shortBio: string;
   longBio: string;
@@ -11,7 +13,7 @@ export interface AboutFormValues {
   phone?: string;
   location?: string;
   resumeUrl?: string;
-  resumeUrlName?: string; // <-- Add this line
+  resumeUrlName?: string;
   profileImageUrl?: string;
   highlights?: string;
   motto?: string;
@@ -29,6 +31,8 @@ export default function AboutForm({
   submitLabel = "Save",
 }: AboutFormProps) {
   const [values, setValues] = useState<AboutFormValues>({
+    firstName: "",
+    lastName: "",
     title: "",
     shortBio: "",
     longBio: "",
@@ -58,6 +62,8 @@ export default function AboutForm({
       setValues({
         ...initialValues,
         highlights: highlights.join("\n"),
+        firstName: initialValues.firstName || "",
+        lastName: initialValues.lastName || "",
       });
       if (initialValues.profileImageUrl) {
         setImagePreview(initialValues.profileImageUrl);
@@ -183,6 +189,32 @@ export default function AboutForm({
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
           <label className={labelBase}>
+            <User className="h-4 w-4 text-primary" /> First Name
+          </label>
+          <input
+            name="firstName"
+            value={values.firstName}
+            onChange={handleChange}
+            className={inputBase}
+            placeholder="First Name"
+            required
+          />
+        </div>
+        <div>
+          <label className={labelBase}>
+            <User className="h-4 w-4 text-primary" /> Last Name
+          </label>
+          <input
+            name="lastName"
+            value={values.lastName}
+            onChange={handleChange}
+            className={inputBase}
+            placeholder="Last Name"
+            required
+          />
+        </div>
+        <div>
+          <label className={labelBase}>
             <User className="h-4 w-4 text-primary" /> Title
           </label>
           <input
@@ -194,7 +226,6 @@ export default function AboutForm({
             required
           />
         </div>
-
         <div>
           <label className={labelBase}>
             <Mail className="h-4 w-4 text-primary" /> Email

@@ -53,8 +53,28 @@ export async function PUT(req: Request) {
 
     const about = await About.findOneAndUpdate(
       {},
-      body,
-      { new: true, upsert: true }
+      {
+        $set: {
+          firstName: body.firstName,
+          lastName: body.lastName,
+          title: body.title,
+          shortBio: body.shortBio,
+          longBio: body.longBio,
+          email: body.email,
+          phone: body.phone,
+          location: body.location,
+          resumeUrl: body.resumeUrl,
+          profileImageUrl: body.profileImageUrl,
+          highlights: body.highlights,
+          motto: body.motto,
+          updatedAt: new Date(),
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
     );
 
     return NextResponse.json(about);
@@ -66,6 +86,7 @@ export async function PUT(req: Request) {
     );
   }
 }
+
 
 /* DELETE */
 export async function DELETE() {

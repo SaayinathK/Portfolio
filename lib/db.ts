@@ -1,15 +1,40 @@
 import mongoose from "mongoose";
 
-const dbConnect = async () => {
-  const uri = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
-  if (!uri) {
-    throw new Error("MONGODB_URI is not set in environment variables.");
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable");
+}
+
+interface Cached {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+// @ts-ignore
+let cached: Cached = global.mongoose;
+
+if (!cached) {
+  // @ts-ignore
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+const dbConnect = async () => {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  await mongoose.connect(uri);
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(MONGODB_URI, {
+        bufferCommands: false,
+      })
+      .then((mongoose) => mongoose);
+  }
 
-  console.log("✅ MongoDB Atlas connected");
+  cached.conn = await cached.promise;
+  console.log("✅ MongoDB connected");
+  return cached.conn;
 };
 
 export default dbConnect;
