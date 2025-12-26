@@ -10,7 +10,7 @@ export async function GET() {
     await dbConnect();
     const projects = await Project.find({}).sort({ createdAt: -1 }).lean();
     // Always return an array for frontend .map compatibility
-    return NextResponse.json(Array.isArray(projects) ? projects : []);
+      return NextResponse.json(Array.isArray(projects) ? projects : []);
   } catch (error) {
     console.error('GET projects error:', error);
     return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });

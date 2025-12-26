@@ -7,7 +7,7 @@ export async function GET() {
     await dbConnect();
     const items = await Contact.find().sort({ createdAt: -1 }).lean();
     // Always return an array for frontend .map compatibility
-    return NextResponse.json(Array.isArray(items) ? items : []);
+      return NextResponse.json(Array.isArray(items) ? items : []);
   } catch (error) {
     console.error("GET contact error:", error);
     return NextResponse.json({ error: "Failed to fetch contacts" }, { status: 500 });

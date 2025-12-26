@@ -8,7 +8,7 @@ export async function GET() {
     await dbConnect();
     const educations = await Education.find({}).sort({ startDate: -1 }).lean();
     // Always return an array for frontend .map compatibility
-    return NextResponse.json(Array.isArray(educations) ? educations : []);
+      return NextResponse.json(Array.isArray(educations) ? educations : []);
   } catch (error) {
     console.error('GET education error:', error);
     return NextResponse.json({ error: 'Failed to fetch education records' }, { status: 500 });

@@ -8,7 +8,7 @@ export async function GET() {
     await dbConnect();
     const achievements = await Achievement.find({}).sort({ createdAt: -1 }).lean();
     // Always return an array for frontend .map compatibility
-    return NextResponse.json(Array.isArray(achievements) ? achievements : []);
+      return NextResponse.json(Array.isArray(achievements) ? achievements : []);
   } catch (error) {
     console.error('GET achievements error:', error);
     return NextResponse.json({ error: 'Failed to fetch achievements' }, { status: 500 });

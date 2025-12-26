@@ -8,7 +8,7 @@ export async function GET() {
     await dbConnect();
     const skills = await Skill.find({}).sort({ createdAt: -1 }).lean();
     // Always return an array for frontend .map compatibility
-    return NextResponse.json(Array.isArray(skills) ? skills : []);
+      return NextResponse.json(Array.isArray(skills) ? skills : []);
   } catch (error) {
     console.error('GET skills error:', error);
     return NextResponse.json({ error: 'Failed to fetch skills' }, { status: 500 });
