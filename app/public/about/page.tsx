@@ -115,10 +115,13 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                   >
                     <div className="relative w-50 h-50 sm:w-100 sm:h-80 md:w-120 md:h-[50rem] lg:w-250 lg:h-[40rem] rounded-3xl overflow-hidden">
                       {about.profileImageUrl ? (
-                        <img
+                        <Image
                           src={about.profileImageUrl}
                           alt="Profile"
                           className="w-full h-full object-cover"
+                          width={400}
+                          height={400}
+                          priority
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -149,7 +152,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                       />
                       
                       <p className="text-sm text-gray-400 font-mono mb-2 flex items-center gap-2">
-                        <span className="animate-pulse">▶</span> // about_me.js
+                        <span className="animate-pulse">▶ // about_me.js</span>
                         <span className="text-green-400 text-xs ml-auto">running...</span>
                       </p>
                       
@@ -550,29 +553,25 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         <div className="flex gap-4 min-w-full whitespace-nowrap pr-6 snap-x snap-mandatory">
                           {(() => {
                             const defaultSkills = [
-                              { icon: <Code2 size={32} />, title: "Full-Stack Development", color: "purple", emoji: "⚛️" },
-                              { icon: <Palette size={32} />, title: "UI/UX Design", color: "pink", emoji: "🎨" },
-                              { icon: <Brain size={32} />, title: "AI & Machine Learning", color: "cyan", emoji: "🤖" },
-                              { icon: <Shield size={32} />, title: "Network Security", color: "green", emoji: "🔒" }
+                              { icon: <Code2 size={32} key="icon-code2" />, title: "Full-Stack Development", color: "purple", emoji: "⚛️" },
+                              { icon: <Palette size={32} key="icon-palette" />, title: "UI/UX Design", color: "pink", emoji: "🎨" },
+                              { icon: <Brain size={32} key="icon-brain" />, title: "AI & Machine Learning", color: "cyan", emoji: "🤖" },
+                              { icon: <Shield size={32} key="icon-shield" />, title: "Network Security", color: "green", emoji: "🔒" }
                             ];
-
                             const palette = {
-                              icons: [<Code2 size={32} />, <Palette size={32} />, <Brain size={32} />, <Shield size={32} />],
+                              icons: [<Code2 size={32} key="icon-code2" />, <Palette size={32} key="icon-palette" />, <Brain size={32} key="icon-brain" />, <Shield size={32} key="icon-shield" />],
                               colors: ["purple", "pink", "cyan", "green"],
                               emojis: ["⚛️", "🎨", "🤖", "🔒"],
                             };
-
                             const highlightSkills = (about?.highlights || [])
                               .filter((h) => h && h.trim())
                               .map((title, index) => ({
-                                icon: palette.icons[index % palette.icons.length],
+                                icon: React.cloneElement(palette.icons[index % palette.icons.length], { key: `icon-${index}` }),
                                 title: title.trim(),
                                 color: palette.colors[index % palette.colors.length],
                                 emoji: palette.emojis[index % palette.emojis.length],
                               }));
-
                             const skillsToShow = highlightSkills.length > 0 ? highlightSkills : defaultSkills;
-
                             return skillsToShow.map((skill, index) => (
                               <motion.div
                                 key={skill.title + index}
@@ -587,23 +586,22 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                                 className="relative p-6 rounded-2xl border border-gray-800 bg-black backdrop-blur-sm group overflow-hidden cursor-pointer min-w-[260px] snap-start"
                               >
                                 {/* Animated gradient border */}
-                                <div className={`absolute inset-0 bg-gradient-to-br from-gray-800/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-
+                                <div key="gradient-border" className={`absolute inset-0 bg-gradient-to-br from-gray-800/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                                 {/* Hover shine effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-
+                                <div key="shine-effect" className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                                 <div className="relative">
                                   <motion.div
+                                    key="icon"
                                     animate={{ rotate: [0, 10, -10, 0] }}
                                     transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY, delay: index * 0.5 }}
                                     className={`text-${skill.color}-400 mb-4 inline-block`}
                                   >
                                     {skill.icon}
                                   </motion.div>
-                                  
                                   <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
                                     {skill.title}
                                     <motion.span
+                                      key="emoji"
                                       animate={{ scale: [1, 1.2, 1] }}
                                       transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, delay: index * 0.3 }}
                                       className="text-lg"
@@ -611,23 +609,23 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                                       {skill.emoji}
                                     </motion.span>
                                   </h4>
-                                  
                                   <div className="flex items-center gap-2">
-                                    <div className={`h-1 flex-1 bg-${skill.color}-500/20 rounded-full overflow-hidden`}>
+                                    <div key="bar-bg" className={`h-1 flex-1 bg-${skill.color}-500/20 rounded-full overflow-hidden`}>
                                       <motion.div
+                                        key="bar"
                                         initial={{ width: "0%" }}
                                         whileInView={{ width: `${70 + index * 10}%` }}
                                         transition={{ duration: 1, delay: index * 0.2 }}
                                         className={`h-full bg-gradient-to-r from-${skill.color}-500 to-${skill.color}-300`}
                                       />
                                     </div>
-                                    <span className={`text-xs text-${skill.color}-400 font-mono`}>
+                                    <span key="percent" className={`text-xs text-${skill.color}-400 font-mono`}>
                                       {70 + index * 10}%
                                     </span>
                                   </div>
                                 </div>
-                                
                                 <motion.div
+                                  key="emoji-bg"
                                   initial={{ opacity: 0 }}
                                   whileHover={{ opacity: 1 }}
                                   className="absolute -bottom-2 -right-2 text-4xl opacity-20"
@@ -635,8 +633,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                                   {skill.emoji}
                                 </motion.div>
                               </motion.div>
-                              ));
-                            })()}
+                            ));
+                          })()}
                           </div>
                         </motion.div>
                       </div>
