@@ -145,18 +145,7 @@ export default function AdminProjectsPage() {
 
           {/* Add Project Button */}
           <button
-            onClick={() => setEditing({
-              _id: '',
-              title: '',
-              description: '',
-              imageUrl: '',
-              githubLink: '',
-              liveLink: '',
-              contribution: 'individual',
-              year: new Date().getFullYear().toString(),
-              projectType: 'Prototype',
-              technologiesFramework: '',
-            })}
+            onClick={() => setEditing(null)}
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
           >
             <Plus size={18} />

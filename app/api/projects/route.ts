@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Project from '@/models/Project';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 
 /* GET: Fetch all projects */
 export async function GET() {
@@ -16,46 +14,13 @@ export async function GET() {
   }
 }
 
-/* POST: Handle both upload and create project */
+/* POST: Create a new project (base64 image, like achievements) */
 export async function POST(req: Request) {
-  const url = new URL(req.url);
-
-  // Handle image upload
-  if (url.searchParams.get('action') === 'upload') {
-    try {
-      const formData = await req.formData();
-      const file = formData.get('file') as File;
-
-      if (!file) return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
-      if (!file.type.startsWith('image/')) return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 });
-      if (file.size > 5 * 1024 * 1024) return NextResponse.json({ error: 'File size must be < 5MB' }, { status: 400 });
-
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const ext = path.extname(file.name);
-      const nameWithoutExt = path.basename(file.name, ext);
-      const filename = `${nameWithoutExt}-${uniqueSuffix}${ext}`.replace(/\s/g, '-');
-
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-      await mkdir(uploadDir, { recursive: true });
-
-      const filepath = path.join(uploadDir, filename);
-      await writeFile(filepath, buffer);
-
-      return NextResponse.json({ url: `/uploads/${filename}`, filename, size: file.size, type: file.type }, { status: 200 });
-    } catch (error) {
-      console.error('Upload error:', error);
-      return NextResponse.json({ error: 'Upload failed', details: error instanceof Error ? error.message : 'Unknown' }, { status: 500 });
-    }
-  }
-
-  // Handle create project
   try {
     await dbConnect();
     const body = await req.json();
 
+    // Accepts imageUrl as base64 string (like achievements)
     const payload = {
       ...body,
       tags: Array.isArray(body.tags) ? body.tags : (body.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),

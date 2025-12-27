@@ -62,16 +62,12 @@ export default function ProjectForm({
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
     if (name === "imageUrl") {
-      // Only set preview if value is a server URL (not blob:)
-      if (value && !value.startsWith("blob:")) {
-        setImagePreview(value);
-      } else {
-        setImagePreview("");
-      }
+      setImagePreview(value);
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Use base64 for imageUrl, no upload endpoint
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -87,36 +83,15 @@ export default function ProjectForm({
       return;
     }
 
-    try {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Use the correct upload endpoint matching the backend
-      const response = await fetch("/api/projects?action=upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let errorMsg = "Upload failed";
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.error || errorMsg;
-        } catch {}
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-      if (!data.url) throw new Error("No image URL returned from upload");
-      setValues((prev) => ({ ...prev, imageUrl: data.url }));
-      setImagePreview(data.url);
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setValues((prev) => ({ ...prev, imageUrl: base64 }));
+      setImagePreview(base64);
       setUploading(false);
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRemoveImage = () => {

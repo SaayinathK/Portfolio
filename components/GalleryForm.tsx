@@ -52,33 +52,24 @@ export default function GalleryForm({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Upload images to the server and use the returned URLs
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setUploading(true);
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const formData = new FormData();
-        formData.append("image", file);
-
-        // POST to your upload endpoint (adjust if needed)
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        if (!res.ok) throw new Error("Upload failed");
-        const data = await res.json();
-        // Expecting { url: "/uploads/filename.jpg" }
-        return data.url;
-      });
+      const uploadPromises = Array.from(files).map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            setTimeout(() => {
+              resolve(URL.createObjectURL(file));
+            }, 1000);
+          })
+      );
 
       const imageUrls = await Promise.all(uploadPromises);
       setImagePreviews((prev) => [...prev, ...imageUrls]);
       setForm((prev) => ({ ...prev, images: [...prev.images, ...imageUrls] }));
-    } catch (err) {
-      alert("Image upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
