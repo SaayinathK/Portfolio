@@ -23,7 +23,7 @@ const ProjectSchema = new Schema({
   liveLink: { type: String },
   contribution: { type: String, enum: ["individual", "team"], default: "individual" },
   year: { type: String },
-  projectType: { type: String, enum: ["Prototype", "Web Application", "Mobile Application", "Web site"], required: true },
+  projectType: { type: String, enum: ["Prototype", "Web Application", "Mobile Application", "Website"], required: true },
   technologiesFramework: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
 });

@@ -87,8 +87,9 @@ export default function ProjectForm({
       const formData = new FormData();
       formData.append("file", file);
 
-      // Use a dedicated upload endpoint for Vercel (e.g., /api/upload)
-      const response = await fetch("/api/upload", {
+
+      // Use the correct upload endpoint with action=upload
+      const response = await fetch("/api/projects?action=upload", {
         method: "POST",
         body: formData,
       });
