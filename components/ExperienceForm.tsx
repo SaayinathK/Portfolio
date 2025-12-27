@@ -1,3 +1,4 @@
+// eslint-disable-next-line jsx-a11y/alt-text
 "use client";
 
 import { useState, useEffect } from "react";

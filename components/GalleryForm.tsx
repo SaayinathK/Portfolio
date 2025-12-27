@@ -3,6 +3,7 @@
 import { useState, useEffect, ReactNode } from "react";
 import Image from "next/image";
 import { X, Upload, Star } from "lucide-react";
+import { upload } from "@vercel/blob/client";
 
 export interface GalleryFormValues {
   _id?: string;
@@ -58,18 +59,18 @@ export default function GalleryForm({
 
     setUploading(true);
     try {
-      const uploadPromises = Array.from(files).map(
-        (file) =>
-          new Promise<string>((resolve) => {
-            setTimeout(() => {
-              resolve(URL.createObjectURL(file));
-            }, 1000);
-          })
-      );
+      const uploadPromises = Array.from(files).map(async (file) => {
+        // Upload to Vercel Blob
+        const { url } = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload", // Make sure this endpoint exists and is configured for Vercel Blob
+        });
+        return url;
+      });
 
-      const imageUrls = await Promise.all(uploadPromises);
-      setImagePreviews((prev) => [...prev, ...imageUrls]);
-      setForm((prev) => ({ ...prev, images: [...prev.images, ...imageUrls] }));
+      const blobUrls = await Promise.all(uploadPromises);
+      setImagePreviews((prev) => [...prev, ...blobUrls]);
+      setForm((prev) => ({ ...prev, images: [...prev.images, ...blobUrls] }));
     } finally {
       setUploading(false);
     }

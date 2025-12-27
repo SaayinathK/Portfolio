@@ -43,6 +43,10 @@ export default function ProjectForm({
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
 
+  // Add state for tech input and tech list
+  const [techInput, setTechInput] = useState<string>("");
+  const [techList, setTechList] = useState<string[]>([]);
+
   useEffect(() => {
     if (initialValues) {
       setValues({
@@ -53,8 +57,45 @@ export default function ProjectForm({
             : ((initialValues.technologiesFramework as string[]) || []).join(", ")
       });
       setImagePreview(initialValues.imageUrl || "");
+      // Initialize techList from initialValues
+      if (initialValues.technologiesFramework) {
+        if (typeof initialValues.technologiesFramework === "string") {
+          setTechList(
+            initialValues.technologiesFramework
+              .split(",")
+              .map((t) => t.trim())
+              .filter((t) => t)
+          );
+        } else if (Array.isArray(initialValues.technologiesFramework)) {
+          setTechList(initialValues.technologiesFramework);
+        }
+      }
     }
   }, [initialValues]);
+
+  // Add tech to list and update values
+  const handleAddTech = () => {
+    const tech = techInput.trim();
+    if (tech && !techList.includes(tech)) {
+      const updatedList = [...techList, tech];
+      setTechList(updatedList);
+      setValues((prev) => ({
+        ...prev,
+        technologiesFramework: updatedList.join(", "),
+      }));
+      setTechInput("");
+    }
+  };
+
+  // Remove tech from list and update values
+  const handleRemoveTech = (index: number) => {
+    const updatedList = techList.filter((_, i) => i !== index);
+    setTechList(updatedList);
+    setValues((prev) => ({
+      ...prev,
+      technologiesFramework: updatedList.join(", "),
+    }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -269,18 +310,52 @@ export default function ProjectForm({
         </select>
       </div>
 
-
       <div>
-        <label className="block text-sm font-medium mb-1 text-black">
-          Technologies/Framework (comma separated)
-        </label>
-        <input
-          name="technologiesFramework"
-          value={values.technologiesFramework || ""}
-          onChange={handleChange}
-          className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder="e.g., Kotlin, Firebase, Android Studio"
-        />
+        {/* Technologies/Framework Input as Array */}
+        <label className="block text-sm font-medium mb-1 text-black">Technologies / Frameworks</label>
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={techInput}
+              onChange={(e) => setTechInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && techInput.trim()) {
+                  e.preventDefault();
+                  handleAddTech();
+                }
+              }}
+              className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="e.g., React, Node.js, MongoDB"
+            />
+            <button
+              type="button"
+              onClick={handleAddTech}
+              className="rounded-xl bg-primary px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-primary/90"
+            >
+              Add
+            </button>
+          </div>
+          {techList.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {techList.map((tech, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700"
+                >
+                  <span>{tech}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTech(index)}
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -246,15 +246,16 @@ const ProjectsPage: React.FC = () => {
                     </div>
 
                     {/* Technologies/Framework */}
+                    {/* Show each technology/framework as a separate badge */}
                     {(() => {
                       let techs: string[] = [];
                       if (Array.isArray(p.technologiesFramework)) {
                         techs = p.technologiesFramework;
                       } else if (typeof p.technologiesFramework === "string" && p.technologiesFramework.length > 0) {
-                        techs = p.technologiesFramework.split(",").map(t => t.trim()).filter(Boolean);
+                        techs = p.technologiesFramework.split(/,|\n/).map(t => t.trim()).filter(Boolean);
                       }
                       return techs.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mt-2">
                           {techs.map((t: string, idx: number) => (
                             <span
                               key={t + idx}

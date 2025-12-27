@@ -63,11 +63,10 @@ const ContactPage: React.FC = () => {
     setError("");
     setSubmitting(true);
 
-    const mailtoLink = `mailto:k.saayinath@gmail.com
-      ?from=${encodeURIComponent(email)}
-      ?subject=${encodeURIComponent(subject)}
-      &body=${encodeURIComponent(message)}`;
 
+    // Use the first contact's email from the model
+    const toEmail = contact[0]?.email || "";
+    const mailtoLink = `mailto:${toEmail}?from=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
     window.location.href = mailtoLink;
 
     setTimeout(() => {

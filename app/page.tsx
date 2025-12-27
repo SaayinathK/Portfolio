@@ -74,7 +74,7 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
               >
                 <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
                   <Code2 className="w-5 h-5 text-blue-400" />
-                  <TypingLabel text="get languages.spoken()"/>
+                  <TypingLabel text="// get languages.spoken()"/>
                 </div>
                 <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
                   Languages I Speak

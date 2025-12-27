@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import ProjectForm, { ProjectFormValues } from "@/components/ProjectForm";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -272,10 +273,14 @@ export default function AdminProjectsPage() {
                   >
                     {project.imageUrl && (
                       <div className="relative h-52 overflow-hidden">
-                        <img
+                        <Image
                           src={project.imageUrl}
                           alt={project.title}
+                          width={640}
+                          height={208}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          unoptimized={typeof project.imageUrl === 'string' && project.imageUrl.startsWith('/uploads/')}
+                          priority={false}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                       </div>
