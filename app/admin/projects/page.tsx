@@ -89,15 +89,13 @@ export default function AdminProjectsPage() {
   const allTechs = Array.from(
     new Set(
       projects
-        .map(p =>
-          typeof p.technologiesFramework === "string"
-            ? p.technologiesFramework.split(",").map(t => t.trim())
-            : Array.isArray(p.technologiesFramework)
-            ? p.technologiesFramework
-            : []
+        .flatMap(project =>
+          Array.isArray(project.technologiesFramework)
+            ? project.technologiesFramework.filter(Boolean)
+            : typeof project.technologiesFramework === "string"
+              ? (project.technologiesFramework as string).split(',').map((t: string) => t.trim()).filter(Boolean)
+              : []
         )
-        .flat()
-        .filter(Boolean)
     )
   );
 
@@ -310,20 +308,42 @@ export default function AdminProjectsPage() {
                               <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold">{project.projectType}</span>
                             )}
                             {project.contribution && (
-                              <span className="px-2 py-0.5 rounded bg-cyan-100 text-cyan-700 text-xs font-semibold">{project.contribution === "individual" ? "Individual" : "Team"}</span>
+                              <span className="px-2 py-0.5 rounded bg-cyan-100 text-blue-700 text-xs font-semibold">{project.contribution === "individual" ? "Individual" : "Team"}</span>
                             )}
                             {project.year && (
                               <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs font-semibold">{project.year}</span>
                             )}
                           </div>
                           <p className="text-gray-700 line-clamp-2 mb-1">{project.description}</p>
+                          {/* Technologies/Framework */}
                           {project.technologiesFramework && (
-                            <div className="flex flex-wrap gap-1 mb-1">
-                              {(typeof project.technologiesFramework === 'string' ? project.technologiesFramework.split(',').map(t => t.trim()) : Array.isArray(project.technologiesFramework) ? project.technologiesFramework : []).filter(Boolean).map((tech, idx) => (
-                                <span key={tech + idx} className="px-2 py-0.5 rounded bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-700 border border-blue-500/20 text-xs font-medium">{tech}</span>
-                              ))}
+                            <div>
+                              <div className="flex flex-wrap gap-2">
+                                {(
+                                  Array.isArray(project.technologiesFramework)
+                                    ? project.technologiesFramework.filter(Boolean)
+                                    : typeof project.technologiesFramework === "string"
+                                      ? (project.technologiesFramework as string).split(",").map(t => t.trim()).filter(Boolean)
+                                      : []
+                                ).map((tech: string, techIdx: number) => (
+                                  <motion.span
+                                    key={tech + techIdx}
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: techIdx * 0.05 }}
+                                    whileHover={{ scale: 1.05, y: -2 }}
+                                    className={
+                                      "px-3 py-1.5 rounded-lg text-sm font-medium border bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border-blue-500/20 hover:bg-opacity-20 transition-all cursor-default"
+                                    }
+                                  >
+                                    {tech}
+                                  </motion.span>
+                                ))}
+                              </div>
                             </div>
                           )}
+
                         </div>
                       </div>
 

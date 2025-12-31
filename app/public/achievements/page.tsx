@@ -160,7 +160,6 @@ const AchievementsPage: React.FC = () => {
 
                   <motion.div 
                     className="relative mb-0 flex items-center gap-3" // changed from inline-flex to flex, added gap
-                    whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                     transition={{ duration: 0.5 }}
                   >
                      <motion.div 

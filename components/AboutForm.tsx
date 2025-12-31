@@ -101,17 +101,31 @@ export default function AboutForm({
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setImagePreview(base64);
-      setValues((prev) => ({ ...prev, profileImageUrl: base64 }));
-    };
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+      alert("Only images allowed");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Max 10MB allowed");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setImagePreview(data.url);
+      setValues((prev) => ({ ...prev, profileImageUrl: data.url }));
+    } catch (err: any) {
+      alert("Upload failed");
+    }
   };
 
   const handleRemoveImage = () => {

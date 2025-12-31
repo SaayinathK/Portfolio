@@ -174,7 +174,7 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
             <AchievementsSection />
           </motion.section>
 
-          {/* Gallery Section - now calls the moved component */}
+          {/* Gallery Section */}
           <motion.section id="gallery" className="scroll-mt-20">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -184,13 +184,13 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
               >
                 <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
                   <Code2 className="w-5 h-5 text-blue-400" />
-                  <TypingLabel text="// await loadImages()"/>
+                  <TypingLabel text="// diplay('gallery');"/>
                 </div>
                 <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-                  Moments
+                  Visual Highlights
                 </h3>
                 <p className="text-gray-400 text-lg mt-3 max-w-xl mx-auto">
-                  Visual highlights that capture key projects, milestones, and moments
+                  Moments, events, and project snapshots that capture my journey
                 </p>
               </motion.div>
             <GallerySection />

@@ -246,27 +246,34 @@ const ProjectsPage: React.FC = () => {
                     </div>
 
                     {/* Technologies/Framework */}
-                    {/* Show each technology/framework as a separate badge */}
-                    {(() => {
-                      let techs: string[] = [];
-                      if (Array.isArray(p.technologiesFramework)) {
-                        techs = p.technologiesFramework;
-                      } else if (typeof p.technologiesFramework === "string" && p.technologiesFramework.length > 0) {
-                        techs = p.technologiesFramework.split(/,|\n/).map(t => t.trim()).filter(Boolean);
-                      }
-                      return techs.length > 0 ? (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {techs.map((t: string, idx: number) => (
-                            <span
-                              key={t + idx}
-                              className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20"
+                    {p.technologiesFramework && (
+                      <div>
+                        <div className="flex flex-wrap gap-2">
+                          {(
+                            Array.isArray(p.technologiesFramework)
+                              ? p.technologiesFramework.filter(Boolean)
+                              : typeof p.technologiesFramework === "string"
+                                ? p.technologiesFramework.split(",").map(t => t.trim()).filter(Boolean)
+                                : []
+                          ).map((tech: string, techIdx: number) => (
+                            <motion.span
+                              key={tech + techIdx}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: i * 0.1 + techIdx * 0.05 }}
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              className={
+                                "px-3 py-1.5 rounded-lg text-sm font-medium border bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border-blue-500/20 hover:bg-opacity-20 transition-all cursor-default"
+                              }
                             >
-                              {t}
-                            </span>
+                              {tech}
+                            </motion.span>
                           ))}
                         </div>
-                      ) : null;
-                    })()}
+                      </div>
+                    )}
+
                   </div>
                 </motion.article>
               );

@@ -3,7 +3,7 @@
 import { useState, useEffect, ReactNode } from "react";
 import Image from "next/image";
 import { X, Upload, Star } from "lucide-react";
-import { upload } from "@vercel/blob/client";
+
 
 export interface GalleryFormValues {
   _id?: string;
@@ -60,17 +60,28 @@ export default function GalleryForm({
     setUploading(true);
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        // Upload to Vercel Blob
-        const { url } = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/upload", // Make sure this endpoint exists and is configured for Vercel Blob
+        if (!file.type.startsWith("image/")) {
+          alert("Only images allowed");
+          return null;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          alert("Max 10MB allowed");
+          return null;
+        }
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
         });
-        return url;
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        return data.url;
       });
 
-      const blobUrls = await Promise.all(uploadPromises);
-      setImagePreviews((prev) => [...prev, ...blobUrls]);
-      setForm((prev) => ({ ...prev, images: [...prev.images, ...blobUrls] }));
+      const cloudinaryUrls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+      setImagePreviews((prev) => [...prev, ...cloudinaryUrls]);
+      setForm((prev) => ({ ...prev, images: [...prev.images, ...cloudinaryUrls] }));
     } finally {
       setUploading(false);
     }

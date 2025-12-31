@@ -13,8 +13,8 @@ export interface ProjectFormValues {
   liveLink?: string;
   contribution?: "individual" | "team";
   year?: string;
-  projectType: "Prototype" | "Web Application" | "Mobile Application" | "Web site";
-  technologiesFramework?: string;
+  projectType: "Prototype" | "Web Application" | "Mobile Application" | "Website";
+  technologiesFramework?: string[];
 }
 
 interface ProjectFormProps {
@@ -37,7 +37,7 @@ export default function ProjectForm({
     contribution: "individual",
     year: new Date().getFullYear().toString(),
     projectType: "Prototype",
-    technologiesFramework: "",
+    technologiesFramework: [],
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -49,27 +49,17 @@ export default function ProjectForm({
 
   useEffect(() => {
     if (initialValues) {
+      const techArr = Array.isArray(initialValues.technologiesFramework)
+        ? initialValues.technologiesFramework
+        : typeof initialValues.technologiesFramework === "string"
+          ? (initialValues.technologiesFramework as string).split(",").map((t) => t.trim()).filter((t) => t)
+          : [];
       setValues({
         ...initialValues,
-        technologiesFramework:
-          typeof initialValues.technologiesFramework === "string"
-            ? initialValues.technologiesFramework
-            : ((initialValues.technologiesFramework as string[]) || []).join(", ")
+        technologiesFramework: techArr,
       });
+      setTechList(techArr);
       setImagePreview(initialValues.imageUrl || "");
-      // Initialize techList from initialValues
-      if (initialValues.technologiesFramework) {
-        if (typeof initialValues.technologiesFramework === "string") {
-          setTechList(
-            initialValues.technologiesFramework
-              .split(",")
-              .map((t) => t.trim())
-              .filter((t) => t)
-          );
-        } else if (Array.isArray(initialValues.technologiesFramework)) {
-          setTechList(initialValues.technologiesFramework);
-        }
-      }
     }
   }, [initialValues]);
 
@@ -81,7 +71,7 @@ export default function ProjectForm({
       setTechList(updatedList);
       setValues((prev) => ({
         ...prev,
-        technologiesFramework: updatedList.join(", "),
+        technologiesFramework: updatedList,
       }));
       setTechInput("");
     }
@@ -93,7 +83,7 @@ export default function ProjectForm({
     setTechList(updatedList);
     setValues((prev) => ({
       ...prev,
-      technologiesFramework: updatedList.join(", "),
+      technologiesFramework: updatedList,
     }));
   };
 
@@ -101,39 +91,58 @@ export default function ProjectForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-    if (name === "imageUrl") {
-      setImagePreview(value);
+    // Only allow manual change for non-technologiesFramework fields
+    if (name === "technologiesFramework") {
+      // If user pastes a comma-separated string, split and add all
+      const arr = value.split(",").map((t) => t.trim()).filter(Boolean);
+      setTechList(arr);
+      setValues((prev) => ({ ...prev, technologiesFramework: arr }));
+    } else {
+      setValues((prev) => ({ ...prev, [name]: value }));
+      if (name === "imageUrl") {
+        setImagePreview(value);
+      }
     }
   };
 
-  // Use base64 for imageUrl, no upload endpoint
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file");
-      return;
-    }
+  if (!file.type.startsWith("image/")) {
+    alert("Only images allowed");
+    return;
+  }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5MB");
-      return;
-    }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Max 5MB allowed");
+    return;
+  }
 
-    setUploading(true);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setValues((prev) => ({ ...prev, imageUrl: base64 }));
-      setImagePreview(base64);
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
-  };
+  setUploading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error);
+
+    setValues((prev) => ({ ...prev, imageUrl: data.url }));
+    setImagePreview(data.url);
+  } catch (err: any) {
+    alert("Upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   const handleRemoveImage = () => {
     setValues((prev) => ({ ...prev, imageUrl: "" }));
@@ -144,8 +153,8 @@ export default function ProjectForm({
     e.preventDefault();
     try {
       setLoading(true);
-      // Pass values as-is; convert technologiesFramework to array in backend if needed
-      await onSubmit(values);
+      // Always submit technologiesFramework as an array
+      await onSubmit({ ...values, technologiesFramework: techList });
       if (!initialValues) {
         setValues({
           title: "",
@@ -156,8 +165,9 @@ export default function ProjectForm({
           contribution: "individual",
           year: new Date().getFullYear().toString(),
           projectType: "Prototype",
-          technologiesFramework: "",
+          technologiesFramework: [],
         });
+        setTechList([]);
         setImagePreview("");
       }
     } finally {
@@ -337,21 +347,21 @@ export default function ProjectForm({
             </button>
           </div>
           {techList.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {techList.map((tech, index) => (
-                <div
+                <span
                   key={index}
-                  className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700"
+                  className="flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 px-3 py-1.5 text-sm font-medium text-blue-700"
                 >
-                  <span>{tech}</span>
+                  {tech}
                   <button
                     type="button"
                     onClick={() => handleRemoveTech(index)}
-                    className="text-gray-500 hover:text-red-500"
+                    className="text-blue-400 hover:text-red-500 ml-1"
                   >
                     <X className="h-4 w-4" />
                   </button>
-                </div>
+                </span>
               ))}
             </div>
           )}

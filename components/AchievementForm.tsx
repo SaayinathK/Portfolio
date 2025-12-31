@@ -68,17 +68,32 @@ export default function AchievementForm({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image upload
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle image upload to Cloudinary
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setForm((prev) => ({ ...prev, imageUrl: base64 }));
-      setImagePreview(base64);
-    };
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+      alert("Only images allowed");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Max 5MB allowed");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setForm((prev) => ({ ...prev, imageUrl: data.url }));
+      setImagePreview(data.url);
+    } catch (err: any) {
+      alert("Upload failed");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

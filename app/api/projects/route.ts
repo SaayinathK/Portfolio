@@ -14,17 +14,19 @@ export async function GET() {
   }
 }
 
-/* POST: Create a new project (base64 image, like achievements) */
 export async function POST(req: Request) {
   try {
     await dbConnect();
     const body = await req.json();
 
-    // Accepts imageUrl as base64 string (like achievements)
     const payload = {
       ...body,
-      tags: Array.isArray(body.tags) ? body.tags : (body.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
-      technologies: Array.isArray(body.technologies) ? body.technologies : (body.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
+      // Store as array
+      technologiesFramework: Array.isArray(body.technologiesFramework)
+        ? body.technologiesFramework.filter(Boolean)
+        : (typeof body.technologiesFramework === 'string' && body.technologiesFramework.trim() !== ''
+            ? [body.technologiesFramework.trim()]
+            : []),
     };
 
     const project = await Project.create(payload);
@@ -46,8 +48,12 @@ export async function PUT(req: Request) {
 
     const payload = {
       ...update,
-      tags: Array.isArray(update.tags) ? update.tags : (update.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
-      technologies: Array.isArray(update.technologies) ? update.technologies : (update.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
+      // Store as array
+      technologiesFramework: Array.isArray(update.technologiesFramework)
+        ? update.technologiesFramework.filter(Boolean)
+        : (typeof update.technologiesFramework === 'string' && update.technologiesFramework.trim() !== ''
+            ? [update.technologiesFramework.trim()]
+            : []),
     };
 
     const project = await Project.findOneAndUpdate({ _id }, payload, { new: true }).lean();
@@ -76,3 +82,5 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }
+
+export const runtime = "nodejs";
