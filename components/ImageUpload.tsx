@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function ImageUpload() {
   const [imageUrl, setImageUrl] = useState('');
@@ -21,7 +22,15 @@ export default function ImageUpload() {
   return (
     <div>
       <input type="file" onChange={handleUpload} />
-      {imageUrl && <img src={imageUrl} alt="Uploaded" width={200} />}
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt="Uploaded"
+          width={200}
+          height={200}
+          style={{ objectFit: 'cover' }}
+        />
+      )}
     </div>
   );
 }

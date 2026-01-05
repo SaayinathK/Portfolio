@@ -1,9 +1,11 @@
 "use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Lock } from "lucide-react";
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+// Make this page dynamic (disable static prerendering)
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD; // moved here
     if (password === ADMIN_PASSWORD) {
       document.cookie = "auth=true; path=/";
       router.replace(searchParams.get("redirect") || "/admin");
