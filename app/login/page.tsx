@@ -1,24 +1,35 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Lock } from "lucide-react";
 
-// Make this page dynamic (disable static prerendering)
+// Disable static prerendering
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD; // moved here
+
+    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
+    if (!ADMIN_PASSWORD) {
+      setError("Admin password not configured");
+      return;
+    }
+
     if (password === ADMIN_PASSWORD) {
       document.cookie = "auth=true; path=/";
-      router.replace((searchParams?.get("redirect")) || "/admin");
+
+      // Read redirect safely at runtime
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect") || "/admin";
+
+      router.replace(redirect);
     } else {
       setError("Invalid password");
     }
@@ -37,8 +48,11 @@ export default function LoginPage() {
           <h2 className="text-2xl font-extrabold text-blue-900 mb-1">
             Admin Login
           </h2>
-          <p className="text-sm text-blue-700">Enter your admin password</p>
+          <p className="text-sm text-blue-700">
+            Enter your admin password
+          </p>
         </div>
+
         <input
           type="password"
           placeholder="Password"
@@ -46,11 +60,13 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         {error && (
           <div className="text-red-500 mb-2 text-sm w-full text-center animate-shake">
             {error}
           </div>
         )}
+
         <button
           type="submit"
           className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2 rounded-lg font-semibold shadow hover:from-blue-700 hover:to-blue-600 transition"
@@ -58,6 +74,7 @@ export default function LoginPage() {
           Login
         </button>
       </form>
+
       <style jsx global>{`
         @keyframes shake {
           10%,
