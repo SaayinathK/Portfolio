@@ -240,7 +240,7 @@ export default function AdminOverview() {
                       {p.imageUrl && (
                         <Image
                           src={p.imageUrl}
-                          alt={p.title}
+                          alt={p.title || "Project image"}
                           width={44}
                           height={44}
                           className="w-11 h-11 object-cover rounded-lg border-2 border-indigo-100 shadow"
