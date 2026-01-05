@@ -272,7 +272,7 @@ export default function AdminOverview() {
                       {a.imageUrl && (
                         <Image
                           src={a.imageUrl}
-                          alt={a.title}
+                          alt={a.title || "Achievement image"}
                           width={36}
                           height={36}
                           className="w-9 h-9 object-cover rounded-md border-2 border-yellow-100 shadow"
@@ -304,7 +304,7 @@ export default function AdminOverview() {
                       {e.logo && (
                         <Image
                           src={e.logo}
-                          alt={e.institution}
+                          alt={e.institution || "Education logo"}
                           width={32}
                           height={32}
                           className="w-10 h-10 object-cover rounded-full border-2 border-gray-300 shadow"
@@ -334,7 +334,7 @@ export default function AdminOverview() {
                       {x.logo && (
                         <Image
                           src={x.logo}
-                          alt={x.company}
+                          alt={x.company || "Experience logo"}
                           width={32}
                           height={32}
                           className="w-10 h-10 object-cover rounded-full border-2 border-pink-100 shadow"
