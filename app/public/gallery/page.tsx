@@ -413,7 +413,10 @@ const GalleryPage: React.FC = () => {
                               whileTap={{ scale: 0.95 }}
                               onClick={() =>
                                 setCurrentImageIndex(
-                                  (prev) => (prev + 1) % selectedAlbumItem.images.length
+                                  (prev) => {
+                                    const len = selectedAlbumItem.images?.length ?? 0;
+                                    return len > 0 ? (prev + 1) % len : prev;
+                                  }
                                 )
                               }
                               className="absolute right-2 sm:right-4 p-2 sm:p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg opacity-0 group-hover/imagepanel:opacity-100 transition-opacity"
