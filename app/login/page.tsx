@@ -18,7 +18,7 @@ export default function LoginPage() {
     const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD; // moved here
     if (password === ADMIN_PASSWORD) {
       document.cookie = "auth=true; path=/";
-      router.replace(searchParams.get("redirect") || "/admin");
+      router.replace((searchParams?.get("redirect")) || "/admin");
     } else {
       setError("Invalid password");
     }
