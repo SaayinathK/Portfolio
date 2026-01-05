@@ -233,7 +233,7 @@ export default function AdminSkillsPage() {
                 {categories.slice(0, 4).map((category) => (
                   <button
                     key={category}
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => setSelectedCategory(category ?? null)}
                     className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium ${
                       selectedCategory === category
                         ? "bg-gradient-to-r from-indigo-500 to-pink-500 text-white"
