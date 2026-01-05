@@ -119,32 +119,6 @@ export default function AdminAchievementsPage() {
     }
   };
 
-  const getCategoryBadge = (category?: string) => {
-    const colors: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
-      athletics: { 
-        bg: "bg-gradient-to-r from-blue-500 to-gray-800", 
-        text: "text-white",
-        icon: <Zap size={12} />
-      },
-      leadership: { 
-        bg: "bg-gradient-to-r from-amber-500 to-orange-500", 
-        text: "text-white",
-        icon: <Crown size={12} />
-      },
-      academic: { 
-        bg: "bg-gradient-to-r from-green-500 to-emerald-500", 
-        text: "text-white",
-        icon: <GraduationCap size={12} />
-      },
-      other: { 
-        bg: "bg-gradient-to-r from-gray-500 to-slate-500", 
-        text: "text-white",
-        icon: <Award size={12} />
-      },
-    };
-    
-    return colors[category as keyof typeof colors] || colors.other;
-  };
 
   // Get all unique categories
   const categories = Array.from(
@@ -291,23 +265,6 @@ export default function AdminAchievementsPage() {
                   >
                     All Categories
                   </button>
-                  {categories.slice(0, 4).map(category => {
-                    const badge = getCategoryBadge(category);
-                    return (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                          selectedCategory === category
-                            ? badge.bg + " text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {badge.icon}
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
             </div>
@@ -360,9 +317,7 @@ export default function AdminAchievementsPage() {
                 animate="show"
                 className="grid gap-4"
               >
-                {filteredAchievements.map((achievement, index) => {
-                  const badge = getCategoryBadge(achievement.category);
-                  
+                {filteredAchievements.map((achievement, index) => {                  
                   return (
                     <motion.div
                       key={achievement._id}
@@ -410,13 +365,6 @@ export default function AdminAchievementsPage() {
                           </div>
                         </div>
                         
-                        {/* Category Badge */}
-                        {achievement.category && (
-                          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${badge.bg} ${badge.text}`}>
-                            {badge.icon}
-                            {achievement.category}
-                          </span>
-                        )}
                       </div>
 
                       {/* Achievement Details */}
@@ -441,14 +389,6 @@ export default function AdminAchievementsPage() {
                             </div>
                           )}
                           
-                          {achievement.icon && (
-                            <div className="flex items-center gap-2">
-                              <Target size={14} className="text-gray-400" />
-                              <span className="text-sm text-gray-600">
-                                {achievement.icon}
-                              </span>
-                            </div>
-                          )}
                         </div>
 
                         {/* Description */}

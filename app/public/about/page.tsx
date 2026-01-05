@@ -367,9 +367,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                       <motion.a
                         whileHover={{ scale: 1.10, rotate: [0, -3, 3, 0] }}
                         whileTap={{ scale: 0.97 }}
-                        href={about?.resumeUrl?.startsWith("data:") 
-                          ? about.resumeUrl 
-                          : `data:application/pdf;base64,${about?.resumeUrl}`}
+                        href={about?.resumeUrl || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="relative w-full md:w-auto px-4 sm:px-10 py-2.5 sm:py-4 rounded-xl bg-gradient-to-br from-blue-900 via-cyan-900 to-black text-white font-extrabold shadow-2xl border-2 border-blue-500/40 hover:from-blue-700 hover:to-cyan-500 transition-all flex items-center justify-center gap-2 sm:gap-4 group overflow-hidden backdrop-blur-md text-sm sm:text-lg"

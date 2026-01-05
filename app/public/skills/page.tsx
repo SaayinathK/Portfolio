@@ -162,7 +162,7 @@ const SkillsPage: React.FC = () => {
             >
               <div className="relative">
                 
-                <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0">
+                <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0">
                   {languagesSpoken.map((lang, idx) => (
                     <motion.div
                       key={lang._id || idx}
@@ -187,8 +187,8 @@ const SkillsPage: React.FC = () => {
                         animate={{ scale: [1, 1.05, 1] }}
                         transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                       />
-                      <div className="relative">
-                        <div className="flex items-center gap-4 mb-4">
+                      <div className="relative py-2 bottom-2">
+                        <div className="flex items-center gap-4 mb-4 ">
                           <motion.div
                             className="w-14 h-14 rounded-xl inline-flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-white/10 shadow-lg group-hover:shadow-blue-400/30 transition-shadow"
                             whileHover={{ rotate: [0, -10, 10, -10, 0] }}
@@ -233,7 +233,7 @@ const SkillsPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-3xl" />
+                      
                     </motion.div>
                   ))}
                 </div>

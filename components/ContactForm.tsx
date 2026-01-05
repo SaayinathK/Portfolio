@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Github, Linkedin, Facebook, Instagram } from "lucide-react";
 
 export interface ContactFormValues {
@@ -38,6 +38,23 @@ export default function ContactForm({ initialValues, onSubmit, submitLabel = "Se
       github: "",
     }
   );
+
+  useEffect(() => {
+    setValues(
+      initialValues ?? {
+        name: "",
+        email: "",
+        studentEmail: "",
+        workEmail: "",
+        phone: "",
+        location: "",
+        instagram: "",
+        facebook: "",
+        linkedin: "",
+        github: "",
+      }
+    );
+  }, [initialValues]);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (

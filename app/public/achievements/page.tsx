@@ -106,8 +106,7 @@ const AchievementsPage: React.FC = () => {
                 return yearB - yearA;
               })
               .map((a, i) => {
-              const Icon = i % 3 === 0 ? Trophy : i % 3 === 1 ? Award : Medal;
-              const colorScheme = { border: "border-gray-500/30", bg: "from-blue-500/10", iconBg: "from-blue-500/20 to-cyan-500/20", glow: "from-blue-600/20 to-cyan-600/20", icon: "text-blue-400" };
+              const colorScheme = { border: "border-gray-500/30", bg: "from-blue-500/10", glow: "from-blue-600/20 to-cyan-600/20"};
 
               return (
                 <motion.article
@@ -156,25 +155,13 @@ const AchievementsPage: React.FC = () => {
                     }}
                   />
                   
-                  {/* Icon with pulsing effect */}
+                  {/* pulsing effect */}
 
                   <motion.div 
                     className="relative mb-0 flex items-center gap-3" // changed from inline-flex to flex, added gap
                     transition={{ duration: 0.5 }}
                   >
-                     <motion.div 
-                      className={`absolute inset-0 rounded-2xl blur-xl`}
-                      style={{ background: `radial-gradient(circle, ${colorScheme.icon.includes('blue') ? 'rgba(59, 130, 246, 0.3)' : colorScheme.icon.includes('cyan') ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.3)'})` }}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.3, 0.6, 0.3]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut"
-                      }}
-                    />
+                     
                     <h3 className="text-base sm:text-xl font-bold text-white mb-1 hover/card:text-blue-300 transition-colors line-clamp-2 relative z-10">
                       {a.title || a.name || "Achievement"}
                     </h3>

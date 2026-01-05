@@ -174,13 +174,57 @@ const GalleryPage: React.FC = () => {
                     rotateY: 3,
                     transition: { duration: 0.3 },
                   }}
-                  className="flex-shrink-0 w-80 h-96 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
+                  className="flex-shrink-0 w-65 h-96 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
                   onClick={() => {
                     setSelectedAlbumItem(g);
                     setCurrentImageIndex(0);
                     setIsAlbumModalOpen(true);
                   }}
                 >
+                  <motion.div
+                  key={g._id || i}
+                  whileHover={{ y: -10 }}
+                  className="relative w-80 h-96 rounded-3xl overflow-hidden border-2 border-blue-500/20 cursor-pointer group/item"
+                  onClick={() => {
+                    setSelectedAlbumItem(g);
+                    setIsAlbumModalOpen(true);
+                  }}
+                >
+                  {/* BACKGROUND IMAGE (ALWAYS PRESENT) */}
+                  {src ? (
+                    <Image
+                      src={src}
+                      alt={g.title || "Gallery"}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover/item:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-blue-900/20">
+                      <ImageIcon size={48} className="text-blue-400/40" />
+                    </div>
+                  )}
+
+                  {/* DARK GRADIENT */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 via-blue-900/20 to-transparent" />
+
+                  {/* DEFAULT STATE (TITLE ONLY) */}
+                  <div className="absolute bottom-0 w-full p-4 transition-opacity duration-300 group-hover/item:opacity-0">
+                    <h3 className="text-white text-lg font-bold truncate">
+                      {g.title}
+                    </h3>
+                  </div>
+
+                  {/* HOVER STATE (TITLE + DESCRIPTION) */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-5 px-5 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 bg-black/50 backdrop-blur-sm">
+                    <h3 className="text-white text-xl font-bold mb-2">
+                      {g.title}
+                    </h3>
+                    <p className="text-gray-200 text-sm text-size-2 line-clamp-6 justify-center left-0 right-4">
+                      {g.description}
+                    </p>
+                  </div>
+
+                </motion.div>
                   {/* Animated border glow */}
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-cyan-400/10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
@@ -192,33 +236,7 @@ const GalleryPage: React.FC = () => {
                       repeat: Number.POSITIVE_INFINITY,
                       ease: "easeInOut",
                     }}
-                  />
-
-                  {/* Thumbnail Image */}
-                  {src ? (
-                    <div className="relative h-full w-full overflow-hidden rounded-3xl">
-                      <Image
-                        src={src}
-                        alt={alt}
-                        className="h-full w-full object-cover transition-all duration-700 group-hover/item:scale-125 group-hover/item:rotate-2"
-                        width={320}
-                        height={384}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover/item:opacity-90 transition-opacity duration-500" />
-
-                      {/* Shimmer effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: "100%" }}
-                        transition={{ duration: 0.8 }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-3xl">
-                      <ImageIcon size={56} className="text-blue-400/50" />
-                    </div>
-                  )}
+                  />                 
 
                   {/* Image Count Badge */}
                   {imageCount > 1 && (
@@ -228,18 +246,7 @@ const GalleryPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Album Title & Description Glass Overlay */}
-                  {(g.title || g.description) && (
-                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-white/10 backdrop-blur-md rounded-b-3xl">
-                      {g.title && (
-                        <div className="text-white font-bold text-lg mb-1 truncate drop-shadow-sm">
-                          {g.title}
-                        </div>
-                      )}
-                      
-                    </div>
-                  )}
-
+                
                   {/* Floating indicator badge */}
                   <motion.div
                     className="absolute top-4 left-4"
@@ -318,6 +325,11 @@ const GalleryPage: React.FC = () => {
             exit={{ opacity: 0 }}
             onClick={() => setIsAlbumModalOpen(false)}
             className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            style={{
+              alignItems: "flex-end",
+              // Center on mobile, bottom on desktop
+              justifyContent: "center",
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -325,7 +337,7 @@ const GalleryPage: React.FC = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               className="bg-gradient-to-br from-black/95 to-black/85 border-2 border-blue-500/30 rounded-3xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col relative"
-              style={{ width: "800px", height: "600px" }}
+              style={{ width: "800px", height: "600px", marginBottom: "3rem" }} // Move modal 4rem up from bottom
             >
               {/* Header */}
               <div className="p-6 border-b border-blue-500/20 flex items-center justify-between">
@@ -410,7 +422,7 @@ const GalleryPage: React.FC = () => {
                   </AnimatePresence>
                 </div>
                 {/* Description Panel */}
-                <div className="w-full sm:w-2/5 flex flex-col  items-start p-4 sm:p-8 bg-blue/90 backdrop-blur-md border-r border-blue-500/20">
+                <div className="w-full sm:w-2/5 flex flex-col items-start p-4 sm:p-8 bg-blue/90 backdrop-blur-md border-r border-blue-500/20 overflow-y-auto max-h-80 no-scrollbar">
                   {selectedAlbumItem.title && (
                     <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{selectedAlbumItem.title}</h3>
                   )}

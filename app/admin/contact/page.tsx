@@ -68,24 +68,38 @@ export default function AdminContactPage() {
         <h2 className="text-2xl font-semibold text-indigo-800 mb-6">
           {editing ? "Edit Contact Information" : "Add Contact Information"}
         </h2>
-        <ContactForm
-          initialValues={
-            editing ?? {
-              name: "",
-              email: "",
-              studentEmail: "",
-              workEmail: "",
-              phone: "",
-              location: "",
-              instagram: "",
-              facebook: "",
-              linkedin: "",
-              github: "",
+          <ContactForm
+            initialValues={
+              editing
+                ? {
+                    _id: editing._id,
+                    name: editing.name,
+                    email: editing.email,
+                    studentEmail: editing.studentEmail,
+                    workEmail: editing.workEmail,
+                    phone: editing.phone,
+                    location: editing.location,
+                    instagram: editing.instagram,
+                    facebook: editing.facebook,
+                    linkedin: editing.linkedin,
+                    github: editing.github,
+                  }
+                : {
+                    name: "",
+                    email: "",
+                    studentEmail: "",
+                    workEmail: "",
+                    phone: "",
+                    location: "",
+                    instagram: "",
+                    facebook: "",
+                    linkedin: "",
+                    github: "",
+                  }
             }
-          }
-          onSubmit={editing ? handleUpdate : handleCreate}
-          submitLabel={editing ? "Update" : "Create"}
-        />
+            onSubmit={editing ? handleUpdate : handleCreate}
+            submitLabel={editing ? "Update" : "Create"}
+          />
       </div>
 
       {/* Submissions Section */}

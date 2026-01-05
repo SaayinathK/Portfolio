@@ -19,7 +19,6 @@ const AchievementSchema = new Schema({
   description: { type: String },
   category: { type: String, enum: ["athletics", "leadership", "academic", "other"], default: "other" },
   year: { type: String },
-  icon: { type: String },
   imageUrl: { type: String }, // <-- Added for image support
   createdAt: { type: Date, default: Date.now },
 });
