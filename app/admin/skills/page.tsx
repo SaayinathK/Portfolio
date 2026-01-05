@@ -240,7 +240,7 @@ export default function AdminSkillsPage() {
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
-                    {categoryIcons[category] || <Tag size={14} />}
+                    {categoryIcons[category as keyof typeof categoryIcons] ?? <Tag size={14} />}
                     {category}
                   </button>
                 ))}
