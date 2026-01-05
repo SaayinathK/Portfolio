@@ -373,7 +373,11 @@ const GalleryPage: React.FC = () => {
                         className="relative w-[90vw] h-[220px] sm:w-[400px] sm:h-[400px] flex items-center justify-center group/imagepanel"
                       >
                         <Image
-                          src={selectedAlbumItem.images?.[currentImageIndex] || selectedAlbumItem.image}
+                          src={
+                            selectedAlbumItem.images?.[currentImageIndex]
+                              ? selectedAlbumItem.images[currentImageIndex] as string
+                              : (selectedAlbumItem.image as string)
+                          }
                           alt={`${selectedAlbumItem.title} - Image ${currentImageIndex + 1}`}
                           className="object-contain rounded-xl shadow-lg w-full h-full"
                           width={400}
