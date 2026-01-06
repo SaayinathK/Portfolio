@@ -322,7 +322,14 @@ export default function AboutForm({
         </label>
         {values.resumeUrl ? (
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm text-gray-700 font-medium">{values.resumeUrlName || "Resume.pdf"}</span>
+            <a
+              href={values.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 underline font-medium"
+            >
+              {values.resumeUrlName || "Resume.pdf"}
+            </a>
             <button
               type="button"
               onClick={() => setValues((prev) => ({ ...prev, resumeUrl: "", resumeUrlName: "" }))}
@@ -336,15 +343,30 @@ export default function AboutForm({
             <input
               type="file"
               accept="application/pdf"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  const base64 = reader.result as string;
-                  setValues((prev) => ({ ...prev, resumeUrl: base64, resumeUrlName: file.name }));
-                };
-                reader.readAsDataURL(file);
+                if (file.type !== "application/pdf") {
+                  alert("Only PDF files allowed");
+                  return;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                  alert("Max 10MB allowed");
+                  return;
+                }
+                try {
+                  const formData = new FormData();
+                  formData.append("file", file);
+                  const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+                  setValues((prev) => ({ ...prev, resumeUrl: data.url, resumeUrlName: file.name }));
+                } catch (err: any) {
+                  alert("Resume upload failed");
+                }
               }}
               className="hidden"
             />
