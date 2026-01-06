@@ -355,15 +355,19 @@ export default function AboutForm({
                   return;
                 }
                 try {
-                  const formData = new FormData();
-                  formData.append("file", file);
-                  const res = await fetch("/api/upload", {
-                    method: "POST",
-                    body: formData,
-                  });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error);
-                  setValues((prev) => ({ ...prev, resumeUrl: data.url, resumeUrlName: file.name }));
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    const base64 = reader.result as string;
+                    setValues((prev) => ({
+                      ...prev,
+                      resumeUrl: base64,
+                      resumeUrlName: file.name,
+                    }));
+                  };
+                  reader.onerror = () => {
+                    alert("Failed to read file");
+                  };
+                  reader.readAsDataURL(file);
                 } catch (err: any) {
                   alert("Resume upload failed");
                 }
