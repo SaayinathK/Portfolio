@@ -161,79 +161,84 @@ const SkillsPage: React.FC = () => {
               className="relative"
             >
               <div className="relative">
-                
-                <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0">
+                <div className="flex gap-6 overflow-x-auto pb-4 px-12 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0">
                   {languagesSpoken.map((lang, idx) => (
                     <motion.div
                       key={lang._id || idx}
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      initial={{ opacity: 0, scale: 0.95, y: 20 }}
                       whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{
                         duration: 0.5,
                         delay: idx * 0.1,
                         type: "spring",
-                        stiffness: 100,
+                        stiffness: 120,
                       }}
-                      whileHover={{
-                        y: -8,
-                        scale: 1.03,
-                        transition: { duration: 0.2 },
-                      }}
-                      className="group relative rounded-2xl p-6 min-w-[260px] border border-gray-800/60 bg-black/70 backdrop-blur-lg transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] hover:border-blue-400"
+                      whileHover={{ y: -10 }}
+                      className="group relative min-w-[270px] rounded-2xl p-6
+                        border border-gray-800/60
+                        bg-black/70 backdrop-blur-xl
+                        transition-all duration-300
+                        hover:border-blue-400
+                        hover:shadow-[0_25px_70px_rgba(59,130,246,0.35)]"
                     >
+                      {/* Animated Glow Layer */}
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-black/30 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                        className="absolute inset-0 rounded-2xl
+                          bg-gradient-to-br from-blue-500/10 via-transparent to-blue-500/10
+                          opacity-0 group-hover:opacity-100"
+                        transition={{ duration: 0.5 }}
                       />
-                      <div className="relative py-2 bottom-2">
-                        <div className="flex items-center gap-4 mb-4 ">
+
+                      <div className="relative space-y-5">
+                        {/* Header */}
+                        <div className="flex items-center gap-4">
                           <motion.div
-                            className="w-14 h-14 rounded-xl inline-flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-white/10 shadow-lg group-hover:shadow-blue-400/30 transition-shadow"
-                            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                            transition={{ duration: 0.5 }}
+                            className="w-14 h-14 rounded-xl flex items-center justify-center
+                              bg-gradient-to-br from-blue-500/20 to-white/10
+                              shadow-lg group-hover:shadow-blue-400/40"
+                            whileHover={{ rotate: [0, -8, 8, -8, 0] }}
+                            transition={{ duration: 0.6 }}
                           >
-                            <Globe className="w-7 h-7 text-blue-400 py-0" />
+                            <Globe className="w-7 h-7 text-blue-400" />
                           </motion.div>
-                          <div className="flex-1">
-                            <h4 className="font-bold text-white text-xl group-hover:text-blue-400 transition-colors py-0">
-                              {lang.language}
-                            </h4>
-                          </div>
+
+                          <h4 className="font-semibold text-lg text-white tracking-wide
+                            group-hover:text-blue-400 transition-colors">
+                            {lang.language}
+                          </h4>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mt-2">
-                          <div className="flex flex-col w-full">
-                            <span className="text-[11px] sm:text-xs text-gray-400 font-mono mt-1 py-1">
-                              {lang.languageProficiency || "Not specified"}
-                            </span>
-                            <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                              <motion.div
-                                initial={{ width: "0%" }}
-                                whileInView={{
-                                  width:
-                                    lang.languageProficiency === "Native or bilingual proficiency"
-                                      ? "100%"
-                                      : lang.languageProficiency === "Full professional proficiency"
-                                      ? "90%"
-                                      : lang.languageProficiency === "Professional working proficiency"
-                                      ? "75%"
-                                      : lang.languageProficiency === "Limited working proficiency"
-                                      ? "55%"
-                                      : lang.languageProficiency === "Elementary proficiency"
-                                      ? "35%"
-                                      : "45%",
-                                }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1, delay: idx * 0.1 }}
-                                className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
-                              />
-                            </div>
-                            
-                          </div>
+
+                        {/* Proficiency Text */}
+                        <span className="text-xs text-gray-400 font-mono">
+                          {lang.languageProficiency || "Not specified"}
+                        </span>
+
+                        {/* Progress Bar */}
+                        <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
+                          <motion.div
+                            initial={{ width: "0%" }}
+                            whileInView={{
+                              width:
+                                lang.languageProficiency === "Native or bilingual proficiency"
+                                  ? "100%"
+                                  : lang.languageProficiency === "Full professional proficiency"
+                                  ? "90%"
+                                  : lang.languageProficiency === "Professional working proficiency"
+                                  ? "75%"
+                                  : lang.languageProficiency === "Limited working proficiency"
+                                  ? "55%"
+                                  : lang.languageProficiency === "Elementary proficiency"
+                                  ? "35%"
+                                  : "45%",
+                            }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: idx * 0.1 }}
+                            className="h-full rounded-full
+                              bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"
+                          />
                         </div>
                       </div>
-                      
                     </motion.div>
                   ))}
                 </div>

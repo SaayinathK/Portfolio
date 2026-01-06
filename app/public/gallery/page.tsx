@@ -174,7 +174,7 @@ const GalleryPage: React.FC = () => {
                     rotateY: 3,
                     transition: { duration: 0.3 },
                   }}
-                  className="flex-shrink-0 w-65 h-96 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
+                  className="flex-shrink-0 w-50 h-[25rem] group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
                   onClick={() => {
                     setSelectedAlbumItem(g);
                     setCurrentImageIndex(0);
@@ -184,7 +184,7 @@ const GalleryPage: React.FC = () => {
                   <motion.div
                   key={g._id || i}
                   whileHover={{ y: -10 }}
-                  className="relative w-80 h-96 rounded-3xl overflow-hidden border-2 border-blue-500/20 cursor-pointer group/item"
+                  className="relative w-60 h-[25rem] rounded-3xl overflow-hidden border-2 border-blue-500/20 cursor-pointer group/item"
                   onClick={() => {
                     setSelectedAlbumItem(g);
                     setIsAlbumModalOpen(true);
@@ -205,7 +205,7 @@ const GalleryPage: React.FC = () => {
                   )}
 
                   {/* DARK GRADIENT */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 via-blue-900/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-950/30 via-blue-950/30 to-transparent" />
 
                   {/* DEFAULT STATE (TITLE ONLY) */}
                   <div className="absolute bottom-0 w-full p-4 transition-opacity duration-300 group-hover/item:opacity-0">
@@ -227,7 +227,7 @@ const GalleryPage: React.FC = () => {
                 </motion.div>
                   {/* Animated border glow */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-cyan-400/10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
+                    className="absolute inset-0 bg-gradient-to-br from-blue-500/70 to-blue-500/70 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
                     animate={{
                       scale: [1, 1.05, 1],
                     }}
@@ -308,9 +308,9 @@ const GalleryPage: React.FC = () => {
           </motion.button>
 
           {/* Progress indicator */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="absolute left-1/2 -translate-x-1/2 flex gap-2">
             {Array.isArray(gallery) && gallery.slice(0, Math.min(gallery.length, 8)).map((_, i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-blue-500/30" />
+              <div key={i} className="w-4 h-2 rounded-full bg-blue-500/80" />
             ))}
           </div>
         </div>
